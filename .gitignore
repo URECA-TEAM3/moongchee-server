@@ -1,6 +1,6 @@
 # Node.js 관련
-node_modules/       # 모든 npm 의존성
-npm-debug.log*      # npm 디버그 로그
+node_modules/       
+npm-debug.log* 
 
 # 환경 설정 파일
 .env                
