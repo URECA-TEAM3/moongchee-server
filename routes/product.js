@@ -1,0 +1,8 @@
+const express = require('express');
+const router = express.Router();
+const productController = require('../controllers/productController'); // 컨트롤러 임포트
+
+// 모든 상품 조회
+router.get('/', productController.getAllProducts);
+
+module.exports = router;

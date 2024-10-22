@@ -9,6 +9,14 @@ const mysql = require('mysql2/promise');
 app.use(cors());
 app.use(express.json());
 
+// 라우팅
+const productRoutes = require('./routes/product');
+// const authRoutes = require('./routes/auth');
+
+app.use('/api/products', productRoutes);
+// app.use('/api/auth', authRoutes);
+
+// 로그인 관련코드(의진코드) -> 요거 파일 안에 옮기면 될 것 같슴다
 const db = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
