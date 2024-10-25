@@ -76,6 +76,20 @@ const createTables = async () => {
       );
     `);
 
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS product (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        category_id INT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        image VARCHAR(255) NOT NULL,
+        description VARCHAR(255) NOT NULL,
+        price INT NOT NULL,
+        sales INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      );
+    `);
+
     console.log('테이블이 성공생성.');
     connection.release();
   } catch (err) {
