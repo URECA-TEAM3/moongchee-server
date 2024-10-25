@@ -56,6 +56,7 @@ const createTables = async () => {
         unique_id VARCHAR(50) NULL,
         profile_image_url VARCHAR(255) NULL,
         nickname VARCHAR(8) NULL,
+        refresh_token VARCHAR(255) NULL,
         PRIMARY KEY (id)
       );
     `);
