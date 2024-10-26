@@ -19,15 +19,29 @@ exports.googleLogin = async (req, res) => {
 
     const [existingUser] = await db.query('SELECT id, unique_id FROM member WHERE unique_id = ?', [userId]);
 
+    const accessToken = generateAccessToken(userId);
+    const refreshToken = generateRefreshToken(userId);
+
     if (existingUser.length > 0) {
+      await db.query('UPDATE member SET refresh_token = ? WHERE unique_id = ?', [refreshToken, userId]);
+
       return res.status(200).json({
         message: '이미 가입된 회원입니다.',
+        accessToken,
+        refreshToken,
         exists: true,
-        id: existingUser[0].id,
+        userId,
+      });
+    } else {
+      await db.query('INSERT INTO member (unique_id, refresh_token) VALUES (?, ?)', [userId, refreshToken]);
+
+      return res.status(200).json({
+        accessToken,
+        refreshToken,
+        exists: false,
+        userId,
       });
     }
-
-    res.status(200).json({ message: '회원가입 필요', exists: false, userId });
   } catch (error) {
     console.error('구글 로그인 오류:', error.message);
     res.status(500).json({ message: '구글 로그인 실패', error: error.message });
