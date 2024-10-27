@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 const db = require('../config/db');
 const { generateAccessToken, generateRefreshToken, verifyToken } = require('../utils/tokenUtils');
 
-// 구글 로그인 로직
 exports.googleLogin = async (req, res) => {
   const { token } = req.body;
 
@@ -36,6 +35,7 @@ exports.googleLogin = async (req, res) => {
       await db.query('INSERT INTO member (unique_id, refresh_token) VALUES (?, ?)', [userId, refreshToken]);
 
       return res.status(200).json({
+        message: '회원가입 필요',
         accessToken,
         refreshToken,
         exists: false,
@@ -69,7 +69,6 @@ exports.kakaoLogin = async (req, res) => {
     const refreshToken = generateRefreshToken(userId);
 
     if (existingUser.length > 0) {
-      // 기존 회원이므로 새로운 토큰을 생성해 전달
       await db.query('UPDATE member SET refresh_token = ? WHERE unique_id = ?', [refreshToken, userId]);
 
       return res.status(200).json({
@@ -80,7 +79,6 @@ exports.kakaoLogin = async (req, res) => {
         userId,
       });
     } else {
-      // 신규 회원으로서 토큰을 생성하고 반환
       await db.query('UPDATE member SET refresh_token = ? WHERE unique_id = ?', [refreshToken, userId]);
 
       return res.status(200).json({
