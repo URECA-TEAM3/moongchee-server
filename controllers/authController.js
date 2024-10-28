@@ -22,6 +22,8 @@ exports.googleLogin = async (req, res) => {
     const refreshToken = generateRefreshToken(userId);
 
     if (existingUser.length > 0) {
+      const [userData] = await db.query('SELECT * FROM member WHERE unique_id = ?', [userId]);
+
       await db.query('UPDATE member SET refresh_token = ? WHERE unique_id = ?', [refreshToken, userId]);
 
       return res.status(200).json({
@@ -29,7 +31,18 @@ exports.googleLogin = async (req, res) => {
         accessToken,
         refreshToken,
         exists: true,
-        userId,
+        userData: {
+          id: userData[0].id,
+          name: userData[0].name,
+          social_provider: userData[0].social_provider,
+          petsitter: userData[0].petsitter,
+          phone: userData[0].phone,
+          address: userData[0].address,
+          birthDate: userData[0].birthDate,
+          unique_id: userData[0].unique_id,
+          profile_image_url: userData[0].profile_image_url,
+          nickname: userData[0].nickname,
+        },
       });
     } else {
       return res.status(200).json({
@@ -67,6 +80,8 @@ exports.kakaoLogin = async (req, res) => {
     const refreshToken = generateRefreshToken(userId);
 
     if (existingUser.length > 0) {
+      const [userData] = await db.query('SELECT * FROM member WHERE unique_id = ?', [userId]);
+
       await db.query('UPDATE member SET refresh_token = ? WHERE unique_id = ?', [refreshToken, userId]);
 
       return res.status(200).json({
@@ -74,7 +89,18 @@ exports.kakaoLogin = async (req, res) => {
         accessToken,
         refreshToken,
         exists: true,
-        userId,
+        userData: {
+          id: userData[0].id,
+          name: userData[0].name,
+          social_provider: userData[0].social_provider,
+          petsitter: userData[0].petsitter,
+          phone: userData[0].phone,
+          address: userData[0].address,
+          birthDate: userData[0].birthDate,
+          unique_id: userData[0].unique_id,
+          profile_image_url: userData[0].profile_image_url,
+          nickname: userData[0].nickname,
+        },
       });
     } else {
       await db.query('UPDATE member SET refresh_token = ? WHERE unique_id = ?', [refreshToken, userId]);
