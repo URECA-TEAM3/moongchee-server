@@ -55,7 +55,7 @@ const createTables = async () => {
         birthDate VARCHAR(50) NULL,
         unique_id VARCHAR(50) NULL,
         profile_image_url VARCHAR(255) NULL,
-        nickname VARCHAR(8) NULL,
+        nickname VARCHAR(15) NULL,
         refresh_token VARCHAR(255) NULL,
         PRIMARY KEY (id)
       );
