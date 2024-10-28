@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const memberRoutes = require('./routes/memberRoutes');
 const petRoutes = require('./routes/petRoutes');
 const productRoutes = require('./routes/product');
+const sitterRoutes = require('./routes/sitterRoutes');
 
 const app = express();
 app.use(cors());
@@ -17,6 +18,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/petsitter', sitterRoutes);
 
 const createDatabase = async () => {
   try {
@@ -85,6 +87,23 @@ const createTables = async () => {
         description VARCHAR(255) NOT NULL,
         price INT NOT NULL,
         sales INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS sitter (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        sitter_id INT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        image VARCHAR(255) NOT NULL,
+        region VARCHAR(100) NOT NULL,
+        description VARCHAR(255) NOT NULL,
+        experience VARCHAR(255) NOT NULL,
+        startTime VARCHAR(50) NOT NULL,
+        endTime VARCHAR(50) NOT NULL,
+        weekdays VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       );
