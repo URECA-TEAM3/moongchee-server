@@ -32,8 +32,6 @@ exports.googleLogin = async (req, res) => {
         userId,
       });
     } else {
-      await db.query('INSERT INTO member (unique_id, refresh_token) VALUES (?, ?)', [userId, refreshToken]);
-
       return res.status(200).json({
         message: '회원가입 필요',
         accessToken,

@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 // 액세스 토큰
 const generateAccessToken = (userId) => {
-  const token = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '5m' });
+  const token = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30m' });
   const decoded = jwt.decode(token);
   console.log('새로 발급된 토큰:', token);
   console.log('발급될때 id값', userId);
