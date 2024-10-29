@@ -90,6 +90,16 @@ const createTables = async () => {
       );
     `);
 
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS cart (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        product_id BIGINT NOT NULL,
+        user_id BIGINT NOT NULL,
+        quantity INT NOT NULL,
+        checked BOOLEAN
+      );
+    `);
+
     console.log('테이블이 성공생성.');
     connection.release();
   } catch (err) {
