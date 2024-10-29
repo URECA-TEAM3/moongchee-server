@@ -109,6 +109,20 @@ const createTables = async () => {
       );
     `);
 
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS reservation (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        user_id INT NOT NULL,
+        sitter_id INT NOT NULL,
+        requestDate VARCHAR(100) NOT NULL,
+        startTime VARCHAR(50) NOT NULL,
+        endTime VARCHAR(50) NOT NULL,
+        status VARCHAR(50) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      );
+    `);
+
     console.log('테이블이 성공생성.');
     connection.release();
   } catch (err) {
