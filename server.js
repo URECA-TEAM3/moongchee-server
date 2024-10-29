@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const memberRoutes = require('./routes/memberRoutes');
 const petRoutes = require('./routes/petRoutes');
 const productRoutes = require('./routes/product');
+const cartRoutes = require('./routes/cartRoutes');
 
 const app = express();
 app.use(cors());
@@ -17,6 +18,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
 
 const createDatabase = async () => {
   try {
