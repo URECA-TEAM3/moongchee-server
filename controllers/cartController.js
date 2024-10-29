@@ -70,3 +70,18 @@ exports.saveCartItems = async (req, res) => {
     res.status(500).json({ message: '장바구니 데이터 업데이트 실패' });
   }
 };
+
+exports.DeleteCartItems = async (req, res) => {
+  const { cart_id } = req.params; // cart_id를 직접 가져옵니다.
+  try {
+    await db.query('DELETE FROM cart WHERE id = ?', [cart_id]);
+    res.status(200).json({ message: '장바구니 상품 삭제 성공.' });
+  } catch (error) {
+    console.error('장바구니 삭제 오류:', error);
+    res.status(500).json({ message: '장바구니 상품 삭제 실패' });
+  }
+};
+
+// exports.getCheckoutItems = asynce (req, res) => {
+
+// }
