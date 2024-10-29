@@ -45,21 +45,21 @@ const createTables = async () => {
     const connection = await db.getConnection();
 
     await connection.query(`
-     CREATE TABLE IF NOT EXISTS member (
-  id INT NOT NULL AUTO_INCREMENT,
-  name VARCHAR(100) NULL, 
-  social_provider VARCHAR(50) NULL, 
-  petsitter TINYINT(1) NULL DEFAULT 0,
-  phone VARCHAR(100) NULL,
-  email VARCHAR(100) NOT NULL UNIQUE,  
-  address VARCHAR(255) NULL, 
-  birthDate VARCHAR(50) NULL,
-  unique_id VARCHAR(50) NULL,
-  profile_image_url VARCHAR(255) NULL,
-  nickname VARCHAR(15) NULL,
-  refresh_token VARCHAR(255) NULL,
-  PRIMARY KEY (id)
-);
+      CREATE TABLE IF NOT EXISTS member (
+        id INT NOT NULL AUTO_INCREMENT,
+        name VARCHAR(100) NOT NULL, 
+        social_provider VARCHAR(50) NOT NULL, 
+        petsitter TINYINT(1) NOT NULL DEFAULT 0,
+        phone VARCHAR(100) NOT NULL,
+        email VARCHAR(100) NOT NULL UNIQUE,  
+        address VARCHAR(255) NOT NULL, 
+        birthDate VARCHAR(50) NOT NULL,
+        unique_id VARCHAR(50) NOT NULL,
+        profile_image_url VARCHAR(255) NOT NULL,
+        nickname VARCHAR(15) NOT NULL,
+        refresh_token VARCHAR(255) NOT NULL,
+        PRIMARY KEY (id)
+      );
     `);
 
     await connection.query(`

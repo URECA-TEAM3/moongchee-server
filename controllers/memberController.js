@@ -26,9 +26,9 @@ exports.signup = async (req, res) => {
 
   try {
     const query = `
-    INSERT INTO member (name, phone, email, address, birthDate, social_provider, unique_id, profile_image_url, nickname, refresh_token)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+      INSERT INTO member (name, phone, email, address, birthDate, social_provider, unique_id, profile_image_url, nickname, refresh_token)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
     const refreshToken = generateRefreshToken(token);
     const values = [name, phone, email, address, birthDate, provider, token, profileImageUrl, nickname, refreshToken];
