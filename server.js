@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
+const bodyParser = require('body-parser');
 dotenv.config();
 
 const authRoutes = require('./routes/authRoutes');
@@ -12,6 +13,7 @@ const cartRoutes = require('./routes/cartRoutes');
 
 const app = express();
 app.use(cors());
+app.use(bodyParser.json());
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);

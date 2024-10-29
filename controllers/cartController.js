@@ -1,7 +1,7 @@
 const db = require('../config/db');
 require('dotenv').config();
 
-// 모든 상품 조회
+// 장바구니에 담긴 상품 조회
 exports.getAllCartItems = async (req, res) => {
   const { user_id } = req.params;
   const numericUserId = Number(user_id);
@@ -50,5 +50,23 @@ exports.postAllCartItems = async (req, res) => {
   } catch (error) {
     console.error('장바구니 상품 추가 오류:', error);
     res.status(500).json({ message: '장바구니 상품 추가 실패' });
+  }
+};
+
+exports.saveCartItems = async (req, res) => {
+  const cartData = req.body.cartData.cartToSend;
+  const user_id = req.body.cartData.user_id;
+
+  try {
+    for (const item of cartData) {
+      const { cart_id, quantity, checked } = item;
+
+      await db.query('UPDATE cart SET quantity = ?, checked = ? WHERE id = ? AND user_id = ?', [quantity, checked, cart_id, user_id]);
+    }
+
+    res.status(200).json({ message: '장바구니 데이터가 성공적으로 업데이트되었습니다.' });
+  } catch (error) {
+    console.error('장바구니 업데이트 오류:', error);
+    res.status(500).json({ message: '장바구니 데이터 업데이트 실패' });
   }
 };

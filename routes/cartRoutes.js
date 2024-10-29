@@ -5,5 +5,6 @@ const cartController = require('../controllers/cartController'); // 컨트롤러
 // 모든 상품 조회
 router.get('/:user_id', cartController.getAllCartItems);
 router.post('/', cartController.postAllCartItems);
+router.post('/save', cartController.saveCartItems);
 
 module.exports = router;
