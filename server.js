@@ -18,7 +18,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/products', productRoutes);
-app.use('/api/confirm', paymentRoutes);
+app.use('/api/payment', paymentRoutes);
 
 const createDatabase = async () => {
   try {
@@ -91,6 +91,13 @@ const createTables = async () => {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       );
     `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS payment_verification (
+        orderId VARCHAR(255) NOT NULL,
+        amount INT NOT NULL,
+        PRIMARY KEY (orderId)
+      );`);
 
     console.log('테이블이 성공생성.');
     connection.release();
