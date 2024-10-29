@@ -2,8 +2,9 @@ const db = require('../config/db');
 
 exports.registerPet = async (req, res) => {
   const { userId, name, age, weight, species, gender, surgery, animalImageUrl } = req.body;
+  console.log('받은 요청 데이터:', req.body);
 
-  if (!userId || !name || !age || !weight || !species || !gender || animalImageUrl === undefined) {
+  if (!userId || !name || !age || !weight || !species || !gender) {
     return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
   }
 
