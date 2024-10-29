@@ -47,15 +47,16 @@ const createTables = async () => {
     await connection.query(`
       CREATE TABLE IF NOT EXISTS member (
         id INT NOT NULL AUTO_INCREMENT,
-        name VARCHAR(100) NOT NULL,
-        social_provider VARCHAR(50) NOT NULL,
+        name VARCHAR(100) NULL, 
+        social_provider VARCHAR(50) NULL, 
         petsitter TINYINT(1) NULL DEFAULT 0,
-        phone VARCHAR(100) NOT NULL,
-        address VARCHAR(255) NOT NULL,
+        phone VARCHAR(100) NULL,  
+        address VARCHAR(255) NULL, 
         birthDate VARCHAR(50) NULL,
         unique_id VARCHAR(50) NULL,
         profile_image_url VARCHAR(255) NULL,
-        nickname VARCHAR(8) NULL,
+        nickname VARCHAR(15) NULL,
+        refresh_token VARCHAR(255) NULL,
         PRIMARY KEY (id)
       );
     `);
@@ -90,10 +91,10 @@ const createTables = async () => {
       );
     `);
 
-    console.log('테이블이 성공생성.');
+    console.log('테이블이 성공적으로 생성되었습니다.');
     connection.release();
   } catch (err) {
-    console.error('테이블 오류 발생:', err);
+    console.error('테이블 생성 오류 발생:', err);
   }
 };
 

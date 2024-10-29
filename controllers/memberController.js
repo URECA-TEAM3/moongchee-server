@@ -1,7 +1,10 @@
 const db = require('../config/db');
+const { generateAccessToken, generateRefreshToken } = require('../utils/tokenUtils');
 
 exports.signup = async (req, res) => {
   const { name, phone, address, birthDate, provider, token, nickname, profileImageUrl } = req.body;
+
+  console.log('Signup Request Data:', { name, phone, address, birthDate, provider, token, nickname, profileImageUrl });
 
   if (!name || !phone || !address || !birthDate || !provider || !token || !nickname || !profileImageUrl) {
     return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
@@ -9,14 +12,17 @@ exports.signup = async (req, res) => {
 
   try {
     const query = `
-        INSERT INTO member (name, phone, address, birthDate, social_provider, unique_id, profile_image_url, nickname)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-    const values = [name, phone, address, birthDate, provider, token, profileImageUrl, nickname];
+      INSERT INTO member (name, phone, address, birthDate, social_provider, unique_id, profile_image_url, nickname, refresh_token)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const refreshToken = generateRefreshToken(token);
+
+    const values = [name, phone, address, birthDate, provider, token, profileImageUrl, nickname, refreshToken];
 
     const [result] = await db.query(query, values);
 
-    res.status(201).json({ message: '회원가입 성공', userId: result.insertId });
+    res.status(201).json({ message: '회원가입 성공', userId: result.insertId, refreshToken });
   } catch (error) {
     console.error('회원가입 오류:', error);
     res.status(500).json({ message: '회원가입 실패' });
