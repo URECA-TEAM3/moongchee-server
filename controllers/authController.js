@@ -100,6 +100,7 @@ exports.kakaoLogin = async (req, res) => {
           unique_id: userData[0].unique_id,
           profile_image_url: userData[0].profile_image_url,
           nickname: userData[0].nickname,
+          email: userData[0].email,
         },
       });
     } else {
