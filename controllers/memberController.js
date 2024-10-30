@@ -81,7 +81,15 @@ exports.sendEmailVerification = async (req, res) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: '"[뭉치] 회원가입 이메일 인증을 완료해주세요."',
-      text: `인증 코드: ${verificationCode}`,
+      html: `
+        <div style="background-color: #1e90ff; color: #ffffff; padding: 50px; text-align: center; font-family: Arial, sans-serif;">
+          <h2>안녕하세요, 뭉치 회원님!</h2>
+          <p>뭉치 계정에 등록하신 이메일 주소가 올바른지 확인하기 위해 인증번호를 보내드립니다.</p>
+          <p>아래의 인증번호를 복사하여 회원가입 페이지에 입력해 주세요.</p>
+          <h3>인증번호: [${verificationCode}]</h3>
+          <p>감사합니다.</p>
+        </div>
+      `,
     };
 
     await transporter.sendMail(mailOptions);
