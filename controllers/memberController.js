@@ -50,3 +50,15 @@ exports.checkNickname = async (req, res) => {
     return res.status(500).json({ message: '서버 오류. 다시 시도해주세요.' });
   }
 };
+
+exports.updatePoints = async (req, res) => {
+  const { userId, amount } = req.body;
+
+  try {
+    const query = `SELECT * FROM member WHERE id = ?`;
+    const [rows] = await db.query(query, [userId]);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: '서버 오류. 다시 시도해주세요.' });
+  }
+};

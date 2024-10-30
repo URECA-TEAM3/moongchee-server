@@ -59,6 +59,7 @@ const createTables = async () => {
         profile_image_url VARCHAR(255) NULL,
         nickname VARCHAR(15) NULL,
         refresh_token VARCHAR(255) NULL,
+        point INT NOT NULL DEFAULT 0,
         PRIMARY KEY (id)
       );
     `);

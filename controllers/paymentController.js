@@ -55,12 +55,10 @@ exports.confirmPayment = async (req, res) => {
 
   if (response.ok) {
     // 결제 성공 비즈니스 로직을 구현하세요.
-    console.log('성공');
     console.log(responseBody);
     res.status(response.status).json(responseBody);
   } else {
     // 결제 실패 비즈니스 로직을 구현하세요.
-    console.log('실패');
     console.log(responseBody);
     res.status(response.status).json(responseBody);
   }
