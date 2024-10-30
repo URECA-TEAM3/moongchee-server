@@ -104,6 +104,25 @@ const createTables = async () => {
       );
     `);
 
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS order_table (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        user_id BIGINT NOT NULL,
+        total DOUBLE NOT NULL,
+        status VARCHAR(255) NOT NULL
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS orderItem (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        product_id BIGINT NOT NULL,
+        order_id BIGINT NOT NULL,
+        quantity INT NOT NULL,
+        price INT NOT NULL
+      );
+    `);
+
     console.log('테이블이 성공생성.');
     connection.release();
   } catch (err) {

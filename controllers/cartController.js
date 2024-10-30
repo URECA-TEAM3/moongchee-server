@@ -82,6 +82,33 @@ exports.DeleteCartItems = async (req, res) => {
   }
 };
 
-// exports.getCheckoutItems = asynce (req, res) => {
+exports.postPayItems = async (req, res) => {
+  const { userId, status, total, productData } = req.body;
 
-// }
+  try {
+    // 1. order_table에 주문 정보 저장
+    const [orderResult] = await db.query('INSERT INTO order_table (user_id, total, status) VALUES (?, ?, ?)', [userId, total, status]);
+
+    const orderId = orderResult.insertId;
+
+    // 2. orderItems 테이블에 상품 정보 저장
+    const orderItemsQueries = productData.map((p) => {
+      return db.query(
+        `
+        INSERT INTO orderItem (product_id, order_id, quantity, price) VALUES (?, ?, ?, ?)`,
+        [p.product_id, orderId, p.quantity, p.price]
+      );
+    });
+
+    // 모든 주문상품 쿼리를 동시에 실행
+    await Promise.all(orderItemsQueries);
+
+    // 3. 주문한 상품들 장바구니에서 제거
+    await db.query('DELETE FROM cart WHERE user_id = ? AND checked = true', [userId]);
+
+    res.status(200).json({ message: '결제 완료' });
+  } catch (error) {
+    console.error('주문 저장 중 오류 발생:', error);
+    res.status(500).json({ message: '결제 실패' });
+  }
+};
