@@ -5,5 +5,6 @@ const { signup, checkNickname, updatePoints } = require('../controllers/memberCo
 router.post('/signup', signup);
 router.post('/check-nickname', checkNickname);
 router.post('/update-points', updatePoints);
+router.post('/send-email-verification', sendEmailVerification);
 
 module.exports = router;

@@ -36,6 +36,7 @@ exports.googleLogin = async (req, res) => {
           name: userData[0].name,
           social_provider: userData[0].social_provider,
           petsitter: userData[0].petsitter,
+          email: userData[0].petsitter,
           phone: userData[0].phone,
           address: userData[0].address,
           birthDate: userData[0].birthDate,
@@ -95,6 +96,7 @@ exports.kakaoLogin = async (req, res) => {
           social_provider: userData[0].social_provider,
           petsitter: userData[0].petsitter,
           phone: userData[0].phone,
+          email: userData[0].petsitter,
           address: userData[0].address,
           birthDate: userData[0].birthDate,
           unique_id: userData[0].unique_id,
@@ -155,7 +157,7 @@ exports.getUserInfo = async (req, res) => {
     const { userId } = req.user;
     console.log('요청된 유저 ID:', userId);
 
-    const [user] = await db.query('SELECT id, name, social_provider, phone, address, profile_image_url FROM member WHERE unique_id = ?', [userId]);
+    const [user] = await db.query('SELECT id, name, social_provider, phone, email, address, profile_image_url FROM member WHERE unique_id = ?', [userId]);
 
     if (user.length === 0) {
       console.log('유저를 찾을 수 없음');
