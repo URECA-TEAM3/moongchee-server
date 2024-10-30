@@ -1,11 +1,11 @@
 const db = require('../config/db');
 
 exports.savePaymentInfo = async (req, res) => {
-  const { orderId, amount } = req.body;
+  const { orderId, userId, amount } = req.body;
 
   try {
-    const query = `INSERT INTO payment_verification (orderId, amount) VALUES (?, ?)`;
-    const values = [orderId, amount];
+    const query = `INSERT INTO payment_verification (order_id, user_id, amount) VALUES (?, ?, ?)`;
+    const values = [orderId, userId, amount];
     const [result] = await db.query(query, values);
 
     res.status(201).json({ message: '결제 정보 임시 저장 성공', orderId: result.insertId });
@@ -21,7 +21,7 @@ exports.confirmPayment = async (req, res) => {
 
   //결제 정보가 올바른지 검증
   try {
-    const query = `SELECT * FROM payment_verification WHERE orderId = ?`;
+    const query = `SELECT * FROM payment_verification WHERE order_id = ?`;
     const [rows] = await db.query(query, orderId);
 
     if (rows[0].orderId == orderId && rows[0].amount != amount) {

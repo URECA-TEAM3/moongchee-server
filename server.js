@@ -97,8 +97,10 @@ const createTables = async () => {
     await connection.query(`
       CREATE TABLE IF NOT EXISTS payment_verification (
         order_id VARCHAR(50) NOT NULL,
+        user_id INT NOT NULL,
         amount INT NOT NULL,
-        PRIMARY KEY (orderId)
+        PRIMARY KEY (order_id),
+        FOREIGN KEY (user_id) REFERENCES member(id) ON DELETE CASCADE
       );`);
 
     await connection.query(`
