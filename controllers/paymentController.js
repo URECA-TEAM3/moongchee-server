@@ -70,3 +70,18 @@ exports.failPayment = async (req, res) => {
     code: req.query.code,
   });
 };
+
+exports.approvedPayment = async (req, res) => {
+  const { orderId, amount, paymentKey } = req.body;
+
+  try {
+    const query = `INSERT INTO payment_approved (order_id, amount, payment_key) VALUES (?, ?, ?)`;
+    const values = [orderId, amount, paymentKey];
+    const [result] = await db.query(query, values);
+
+    res.status(201).json({ message: '결제 승인 완료', orderId: result.insertId });
+  } catch (error) {
+    console.error('결제 승인 오류:', error);
+    res.status(500).json({ message: '결제 승인 실패' });
+  }
+};

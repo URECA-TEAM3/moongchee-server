@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const { savePaymentInfo, confirmPayment, failPayment, approvedPayment } = require('../controllers/paymentController');
 
-const controller = require('../controllers/paymentController');
-
-router.route('/').post(controller.savePaymentInfo);
-router.route('/confirm').post(controller.confirmPayment);
-router.route('/fail').get(controller.failPayment);
+router.post('/', savePaymentInfo);
+router.post('/confirm', confirmPayment);
+router.get('/fail', failPayment);
+router.post('/approve', approvedPayment);
 
 module.exports = router;
