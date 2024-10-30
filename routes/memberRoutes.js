@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { signup, checkNickname, updatePoints } = require('../controllers/memberController');
+const { signup, checkNickname, updatePoints, sendEmailVerification } = require('../controllers/memberController');
 
 router.post('/signup', signup);
 router.post('/check-nickname', checkNickname);

@@ -94,10 +94,17 @@ exports.sendEmailVerification = async (req, res) => {
 
 exports.updatePoints = async (req, res) => {
   const { userId, amount } = req.body;
+  const amountToPoints = {
+    10000: 100,
+    30000: 310,
+    50000: 520,
+    70000: 750,
+    100000: 1100,
+  };
 
   try {
     const query = `UPDATE member SET point = point + ? where id = ?`;
-    const [rows] = await db.query(query, [amount, userId]);
+    const [rows] = await db.query(query, [amountToPoints[amount], userId]);
 
     if (rows.affectedRows === 0) return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
 
