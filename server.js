@@ -96,9 +96,17 @@ const createTables = async () => {
 
     await connection.query(`
       CREATE TABLE IF NOT EXISTS payment_verification (
-        orderId VARCHAR(255) NOT NULL,
+        order_id VARCHAR(50) NOT NULL,
         amount INT NOT NULL,
         PRIMARY KEY (orderId)
+      );`);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS payment_approved (
+        order_id VARCHAR(50) NOT NULL,
+        amount INT NOT NULL,
+        payment_key VARCHAR(50) NOT NULL,
+        FOREIGN KEY (order_id) REFERENCES payment_verification(order_id) ON DELETE CASCADE
       );`);
 
     console.log('테이블이 성공적으로 생성되었습니다.');
