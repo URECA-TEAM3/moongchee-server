@@ -80,7 +80,7 @@ exports.sendEmailVerification = async (req, res) => {
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
-      subject: '이메일 인증 코드',
+      subject: '"[뭉치] 회원가입 이메일 인증을 완료해주세요."',
       text: `인증 코드: ${verificationCode}`,
     };
 
