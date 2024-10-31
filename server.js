@@ -108,6 +108,10 @@ const createTables = async () => {
         user_id BIGINT NOT NULL,
         quantity INT NOT NULL,
         checked BOOLEAN
+      );
+    `);
+
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS sitter (
         id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
         sitter_id INT NOT NULL,
@@ -130,6 +134,10 @@ const createTables = async () => {
         user_id BIGINT NOT NULL,
         total DOUBLE NOT NULL,
         status VARCHAR(255) NOT NULL
+      );
+    `);
+
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS reservation (
         id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
         user_id INT NOT NULL,

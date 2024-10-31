@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const cartController = require('../controllers/cartController'); // 컨트롤러 임포트
+const { getAllCartItems, postPayItems, postAllCartItems, DeleteCartItems, saveCartItems } = require('../controllers/cartController'); // 컨트롤러 임포트
 
-// 모든 상품 조회
-router.get('/:user_id', cartController.getAllCartItems);
-router.post('/pay', cartController.postPayItems);
-router.post('/', cartController.postAllCartItems);
-router.delete('/:cart_id', cartController.DeleteCartItems);
-router.post('/save', cartController.saveCartItems);
+router.get('/:user_id', getAllCartItems);
+router.post('/', postAllCartItems);
+router.post('/pay', postPayItems);
+router.post('/save', saveCartItems);
+router.delete('/:cart_id', DeleteCartItems);
 
 module.exports = router;
