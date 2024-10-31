@@ -123,6 +123,21 @@ const createTables = async () => {
       );
     `);
 
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS reservation_details (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        reservation_id BIGINT NOT NULL,
+        request TEXT,
+        dogSize VARCHAR(50),
+        pet VARCHAR(50),
+        workingTime VARCHAR(50),
+        price DECIMAL(10, 2),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (reservation_id) REFERENCES reservation(id) ON DELETE CASCADE
+      );
+    `);
+
     console.log('테이블이 성공생성.');
     connection.release();
   } catch (err) {

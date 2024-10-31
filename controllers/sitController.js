@@ -101,7 +101,76 @@ exports.getUserReservations = async (req, res) => {
   }
 };
 
-//예약내역 삭제
+// 예약내역 상세조회
+exports.getReservationWithDetails = async (req, res) => {
+  const { reservation_id } = req.params;
+
+  try {
+    const [reservation] = await db.query(
+      `
+      SELECT 
+        reservation.id AS reservation_id,
+        reservation.user_id,
+        reservation.sitter_id,
+        reservation.requestDate,
+        reservation.startTime,
+        reservation.endTime,
+        reservation.status,
+        detail.request,
+        detail.dogSize,
+        detail.workingTime,
+        detail.price
+      FROM reservation
+      JOIN reservation_details detail ON reservation.id = detail.reservation_id
+      WHERE reservation.id = ?
+    `,
+      [reservation_id]
+    );
+
+    if (!reservation) {
+      return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    res.status(200).json({ data: reservation });
+  } catch (error) {
+    console.error('Error fetching reservation details:', error);
+    res.status(500).json({ message: 'Failed to fetch reservation details' });
+  }
+};
+
+// 예약내역 추가
+exports.createReservationWithDetails = async (req, res) => {
+  const { user_id, sitter_id, requestDate, startTime, endTime, status, request, dogSize, workingTime, price } = req.body;
+
+  if (!user_id || !sitter_id || !requestDate || !startTime || !endTime) {
+    return res.status(400).json({ message: 'All main fields are required.' });
+  }
+
+  try {
+    const [reservationResult] = await db.query(
+      `INSERT INTO reservation (user_id, sitter_id, requestDate, startTime, endTime, status) VALUES (?, ?, ?, ?, ?, ?)`,
+      [user_id, sitter_id, requestDate, startTime, endTime, status || 'reserved']
+    );
+
+    const reservationId = reservationResult.insertId;
+
+    await db.query(`INSERT INTO reservation_details (reservation_id, request, dogSize, pet, workingTime, price) VALUES (?, ?, ?, ?, ?, ?)`, [
+      reservationId,
+      request,
+      dogSize,
+      pet,
+      workingTime,
+      price,
+    ]);
+
+    res.status(201).json({ message: 'Reservation with details created successfully', reservationId });
+  } catch (error) {
+    console.error('Error creating reservation with details:', error);
+    res.status(500).json({ message: 'Failed to create reservation with details' });
+  }
+};
+
+// 예약내역 삭제
 exports.cancelReservation = async (req, res) => {
   const { reservation_id } = req.body;
 
