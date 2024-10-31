@@ -101,10 +101,11 @@ exports.updatePoints = async (req, res) => {
     70000: 750,
     100000: 1100,
   };
+  const value = amount > 1100 ? amountToPoints[amount] : amount;
 
   try {
     const query = `UPDATE member SET point = point + ? where id = ?`;
-    const [rows] = await db.query(query, [amountToPoints[amount], userId]);
+    const [rows] = await db.query(query, [value, userId]);
 
     if (rows.affectedRows === 0) return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
 
