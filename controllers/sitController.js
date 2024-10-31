@@ -140,7 +140,7 @@ exports.getReservationWithDetails = async (req, res) => {
 
 // 예약내역 추가
 exports.createReservationWithDetails = async (req, res) => {
-  const { user_id, sitter_id, requestDate, startTime, endTime, status, request, dogSize, workingTime, price } = req.body;
+  const { user_id, sitter_id, requestDate, startTime, endTime, status, request, dogSize, pet, workingTime, price } = req.body;
 
   if (!user_id || !sitter_id || !requestDate || !startTime || !endTime) {
     return res.status(400).json({ message: 'All main fields are required.' });
