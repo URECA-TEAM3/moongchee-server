@@ -7,6 +7,7 @@ dotenv.config();
 const authRoutes = require('./routes/authRoutes');
 const memberRoutes = require('./routes/memberRoutes');
 const petRoutes = require('./routes/petRoutes');
+const sitterRoutes = require('./routes/sitterRoutes');
 const productRoutes = require('./routes/productRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 
@@ -18,6 +19,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/petsitter', sitterRoutes);
 app.use('/api/payments', paymentRoutes);
 
 const createDatabase = async () => {
@@ -96,13 +98,60 @@ const createTables = async () => {
     `);
 
     await connection.query(`
+      CREATE TABLE IF NOT EXISTS sitter (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        sitter_id INT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        image VARCHAR(255) NOT NULL,
+        region VARCHAR(100) NOT NULL,
+        description VARCHAR(255) NOT NULL,
+        experience VARCHAR(255) NOT NULL,
+        startTime VARCHAR(50) NOT NULL,
+        endTime VARCHAR(50) NOT NULL,
+        weekdays VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS reservation (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        user_id INT NOT NULL,
+        sitter_id INT NOT NULL,
+        requestDate VARCHAR(100) NOT NULL,
+        startTime VARCHAR(50) NOT NULL,
+        endTime VARCHAR(50) NOT NULL,
+        status VARCHAR(50) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS reservation_details (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        reservation_id BIGINT NOT NULL,
+        request TEXT,
+        dogSize VARCHAR(50),
+        pet VARCHAR(50),
+        workingTime VARCHAR(50),
+        price DECIMAL(10, 2),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (reservation_id) REFERENCES reservation(id) ON DELETE CASCADE
+      );
+    `);
+    
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS payment_verification (
         order_id VARCHAR(50) NOT NULL,
         user_id INT NOT NULL,
         amount INT NOT NULL,
         PRIMARY KEY (order_id),
         FOREIGN KEY (user_id) REFERENCES member(id) ON DELETE CASCADE
-      );`);
+      );
+      `);
 
     await connection.query(`
       CREATE TABLE IF NOT EXISTS payment_approved (
@@ -110,7 +159,8 @@ const createTables = async () => {
         amount INT NOT NULL,
         payment_key VARCHAR(50) NOT NULL,
         FOREIGN KEY (order_id) REFERENCES payment_verification(order_id) ON DELETE CASCADE
-      );`);
+      );
+      `);
 
     console.log('테이블이 성공적으로 생성되었습니다.');
     connection.release();
