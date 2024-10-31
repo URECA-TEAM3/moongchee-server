@@ -50,7 +50,7 @@ exports.getPetDetail = async (req, res) => {
 
 // 반려동물 정보 수정
 exports.updateProfile = async (req, res) => {
-  const {id, name, age, surgery, weight, animal_image_url} = req.body;
+  const {id, name, age, gender, surgery, weight, animal_image_url} = req.body;
 
   if (!id) {
     return res.status(400).json('유효한 반려동물 ID가 필요합니다.');
@@ -59,11 +59,11 @@ exports.updateProfile = async (req, res) => {
   try {
     const query = `
       UPDATE pet
-      SET name=?, age=?, surgery=?, animal_image_url=?, weight=?
+      SET name=?, age=?, gender=?, surgery=?, animal_image_url=?, weight=?
       WHERE id=?
     `;
 
-    const values = [name, age, surgery, animal_image_url, weight, id];
+    const values = [name, age, gender, surgery, animal_image_url, weight, id];
 
     const [result] = await db.query(query, values);
 
@@ -78,6 +78,7 @@ exports.updateProfile = async (req, res) => {
       name,
       surgery,
       weight,
+      gender,
     });
   } catch (error) {
     console.error('반려동물 정보 업데이트 오류 : ', error);
