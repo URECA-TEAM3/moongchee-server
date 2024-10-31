@@ -157,7 +157,9 @@ exports.getUserInfo = async (req, res) => {
     const { userId } = req.user;
     console.log('요청된 유저 ID:', userId);
 
-    const [user] = await db.query('SELECT id, name, social_provider, phone, email, address, profile_image_url FROM member WHERE unique_id = ?', [userId]);
+    const [user] = await db.query('SELECT id, name, social_provider, phone, email, address, profile_image_url, point FROM member WHERE unique_id = ?', [
+      userId,
+    ]);
 
     if (user.length === 0) {
       console.log('유저를 찾을 수 없음');
