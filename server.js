@@ -101,7 +101,6 @@ const createTables = async () => {
     await connection.query(`
       CREATE TABLE IF NOT EXISTS sitter (
         id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-        sitter_id INT NOT NULL,
         name VARCHAR(255) NOT NULL,
         image VARCHAR(255) NOT NULL,
         region VARCHAR(100) NOT NULL,
@@ -110,6 +109,7 @@ const createTables = async () => {
         startTime VARCHAR(50) NOT NULL,
         endTime VARCHAR(50) NOT NULL,
         weekdays VARCHAR(255) NOT NULL,
+        status VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       );
@@ -143,7 +143,7 @@ const createTables = async () => {
         FOREIGN KEY (reservation_id) REFERENCES reservation(id) ON DELETE CASCADE
       );
     `);
-    
+
     await connection.query(`
       CREATE TABLE IF NOT EXISTS payment_verification (
         order_id VARCHAR(50) NOT NULL,
