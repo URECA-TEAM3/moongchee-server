@@ -81,7 +81,15 @@ exports.sendEmailVerification = async (req, res) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: '"[뭉치] 회원가입 이메일 인증을 완료해주세요."',
-      text: `인증 코드: ${verificationCode}`,
+      html: `
+        <div style="background-color: #2589E7; color: #ffffff; padding: 50px; text-align: center; font-family: Arial, sans-serif;">
+          <h2>안녕하세요, 뭉치 회원님!</h2>
+          <p>뭉치 계정에 등록하신 이메일 주소가 올바른지 확인하기 위해 인증번호를 보내드립니다.</p>
+          <p>아래의 인증번호를 복사하여 회원가입 페이지에 입력해 주세요.</p>
+          <h3>인증번호: [${verificationCode}]</h3>
+          <p>감사합니다.</p>
+        </div>
+      `,
     };
 
     await transporter.sendMail(mailOptions);
@@ -101,10 +109,11 @@ exports.updatePoints = async (req, res) => {
     70000: 750,
     100000: 1100,
   };
+  const value = amount > 1100 ? amountToPoints[amount] : amount;
 
   try {
     const query = `UPDATE member SET point = point + ? where id = ?`;
-    const [rows] = await db.query(query, [amountToPoints[amount], userId]);
+    const [rows] = await db.query(query, [value, userId]);
 
     if (rows.affectedRows === 0) return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
 
@@ -112,5 +121,20 @@ exports.updatePoints = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: '서버 오류. 다시 시도해주세요.' });
+  }
+};
+
+exports.getPoint = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const [result] = await db.query('SELECT point FROM member WHERE id = ?', [userId]); // ID로 상품 조회
+
+    if (result.length === 0) return res.status(404).json({ message: '상품을 찾을 수 없습니다.' }); // 상품이 없을 경우
+
+    res.status(200).json({ message: '포인트 조회 성공', data: result[0] });
+  } catch (error) {
+    console.error('포인트 조회 오류:', error);
+    res.status(500).json({ message: '포인트 조회 실패' });
   }
 };
