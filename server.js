@@ -7,8 +7,9 @@ dotenv.config();
 const authRoutes = require('./routes/authRoutes');
 const memberRoutes = require('./routes/memberRoutes');
 const petRoutes = require('./routes/petRoutes');
-const productRoutes = require('./routes/product');
 const sitterRoutes = require('./routes/sitterRoutes');
+const productRoutes = require('./routes/productRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 app.use(cors());
@@ -19,6 +20,7 @@ app.use('/api/members', memberRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/petsitter', sitterRoutes);
+app.use('/api/payments', paymentRoutes);
 
 const createDatabase = async () => {
   try {
@@ -49,15 +51,18 @@ const createTables = async () => {
     await connection.query(`
       CREATE TABLE IF NOT EXISTS member (
         id INT NOT NULL AUTO_INCREMENT,
-        name VARCHAR(100) NOT NULL,
-        social_provider VARCHAR(50) NOT NULL,
-        petsitter TINYINT(1) NULL DEFAULT 0,
+        name VARCHAR(100) NOT NULL, 
+        social_provider VARCHAR(50) NOT NULL, 
+        petsitter TINYINT(1) NOT NULL DEFAULT 0,
         phone VARCHAR(100) NOT NULL,
-        address VARCHAR(255) NOT NULL,
-        birthDate VARCHAR(50) NULL,
-        unique_id VARCHAR(50) NULL,
-        profile_image_url VARCHAR(255) NULL,
-        nickname VARCHAR(8) NULL,
+        email VARCHAR(100) NOT NULL UNIQUE,  
+        address VARCHAR(255) NOT NULL, 
+        birthDate VARCHAR(50) NOT NULL,
+        unique_id VARCHAR(50) NOT NULL,
+        profile_image_url VARCHAR(255) NOT NULL,
+        nickname VARCHAR(15) NOT NULL,
+        refresh_token VARCHAR(255) NOT NULL,
+        point INT NOT NULL DEFAULT 0,
         PRIMARY KEY (id)
       );
     `);
@@ -139,9 +144,26 @@ const createTables = async () => {
     `);
 
     console.log('테이블이 성공생성.');
+      CREATE TABLE IF NOT EXISTS payment_verification (
+        order_id VARCHAR(50) NOT NULL,
+        user_id INT NOT NULL,
+        amount INT NOT NULL,
+        PRIMARY KEY (order_id),
+        FOREIGN KEY (user_id) REFERENCES member(id) ON DELETE CASCADE
+      );`);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS payment_approved (
+        order_id VARCHAR(50) NOT NULL,
+        amount INT NOT NULL,
+        payment_key VARCHAR(50) NOT NULL,
+        FOREIGN KEY (order_id) REFERENCES payment_verification(order_id) ON DELETE CASCADE
+      );`);
+
+    console.log('테이블이 성공적으로 생성되었습니다.');
     connection.release();
   } catch (err) {
-    console.error('테이블 오류 발생:', err);
+    console.error('테이블 생성 오류 발생:', err);
   }
 };
 
