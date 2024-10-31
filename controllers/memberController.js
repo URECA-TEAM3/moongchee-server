@@ -99,3 +99,26 @@ exports.sendEmailVerification = async (req, res) => {
     res.status(500).json({ message: '이메일 전송에 실패했습니다.' });
   }
 };
+
+exports.updatePoints = async (req, res) => {
+  const { userId, amount } = req.body;
+  const amountToPoints = {
+    10000: 100,
+    30000: 310,
+    50000: 520,
+    70000: 750,
+    100000: 1100,
+  };
+
+  try {
+    const query = `UPDATE member SET point = point + ? where id = ?`;
+    const [rows] = await db.query(query, [amountToPoints[amount], userId]);
+
+    if (rows.affectedRows === 0) return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+
+    return res.status(200).json({ message: '포인트가 성공적으로 업데이트 됐습니다.' });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: '서버 오류. 다시 시도해주세요.' });
+  }
+};

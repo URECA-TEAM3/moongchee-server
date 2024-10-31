@@ -7,7 +7,8 @@ dotenv.config();
 const authRoutes = require('./routes/authRoutes');
 const memberRoutes = require('./routes/memberRoutes');
 const petRoutes = require('./routes/petRoutes');
-const productRoutes = require('./routes/product');
+const productRoutes = require('./routes/productRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 app.use(cors());
@@ -17,6 +18,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/payments', paymentRoutes);
 
 const createDatabase = async () => {
   try {
@@ -58,6 +60,7 @@ const createTables = async () => {
         profile_image_url VARCHAR(255) NOT NULL,
         nickname VARCHAR(15) NOT NULL,
         refresh_token VARCHAR(255) NOT NULL,
+        point INT NOT NULL DEFAULT 0,
         PRIMARY KEY (id)
       );
     `);
@@ -91,6 +94,23 @@ const createTables = async () => {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       );
     `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS payment_verification (
+        order_id VARCHAR(50) NOT NULL,
+        user_id INT NOT NULL,
+        amount INT NOT NULL,
+        PRIMARY KEY (order_id),
+        FOREIGN KEY (user_id) REFERENCES member(id) ON DELETE CASCADE
+      );`);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS payment_approved (
+        order_id VARCHAR(50) NOT NULL,
+        amount INT NOT NULL,
+        payment_key VARCHAR(50) NOT NULL,
+        FOREIGN KEY (order_id) REFERENCES payment_verification(order_id) ON DELETE CASCADE
+      );`);
 
     console.log('테이블이 성공적으로 생성되었습니다.');
     connection.release();
