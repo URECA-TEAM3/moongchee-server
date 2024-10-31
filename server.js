@@ -57,6 +57,7 @@ const createTables = async () => {
         phone VARCHAR(100) NOT NULL,
         email VARCHAR(100) NOT NULL UNIQUE,  
         address VARCHAR(255) NOT NULL, 
+        detailaddress VARCHAR(255) DEFAULT NULL, 
         birthDate VARCHAR(50) NOT NULL,
         unique_id VARCHAR(50) NOT NULL,
         profile_image_url VARCHAR(255) NOT NULL,
