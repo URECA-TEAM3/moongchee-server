@@ -82,7 +82,7 @@ exports.sendEmailVerification = async (req, res) => {
       to: email,
       subject: '"[뭉치] 회원가입 이메일 인증을 완료해주세요."',
       html: `
-        <div style="background-color: #1e90ff; color: #ffffff; padding: 50px; text-align: center; font-family: Arial, sans-serif;">
+        <div style="background-color: #2589E7; color: #ffffff; padding: 50px; text-align: center; font-family: Arial, sans-serif;">
           <h2>안녕하세요, 뭉치 회원님!</h2>
           <p>뭉치 계정에 등록하신 이메일 주소가 올바른지 확인하기 위해 인증번호를 보내드립니다.</p>
           <p>아래의 인증번호를 복사하여 회원가입 페이지에 입력해 주세요.</p>
