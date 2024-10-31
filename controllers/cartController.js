@@ -57,6 +57,12 @@ exports.saveCartItems = async (req, res) => {
   const cartData = req.body.cartData.cartToSend;
   const user_id = req.body.cartData.user_id;
 
+  if (!user_id) {
+    return res.status(400).send('User ID is required');
+  } else {
+    console.log('user_id 존재', user_id, cartData);
+  }
+
   try {
     for (const item of cartData) {
       const { cart_id, quantity, checked } = item;
