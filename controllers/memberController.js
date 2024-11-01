@@ -16,9 +16,9 @@ const generateVerificationCode = () => {
 };
 
 exports.signup = async (req, res) => {
-  const { name, phone, email, address, birthDate, provider, token, nickname, profileImageUrl } = req.body;
+  const { name, phone, email, address, detailAddress, birthDate, provider, token, nickname, profileImageUrl } = req.body;
 
-  console.log('Signup Request Data:', { name, phone, email, address, birthDate, provider, token, nickname, profileImageUrl });
+  console.log('Signup Request Data:', { name, phone, email, address, detailAddress, birthDate, provider, token, nickname, profileImageUrl });
 
   if (!name || !phone || !email || !address || !birthDate || !provider || !token || !nickname || !profileImageUrl) {
     return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
@@ -26,12 +26,12 @@ exports.signup = async (req, res) => {
 
   try {
     const query = `
-      INSERT INTO member (name, phone, email, address, birthDate, social_provider, unique_id, profile_image_url, nickname, refresh_token)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO member (name, phone, email, address, detailaddress, birthDate, social_provider, unique_id, profile_image_url, nickname, refresh_token)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const refreshToken = generateRefreshToken(token);
-    const values = [name, phone, email, address, birthDate, provider, token, profileImageUrl, nickname, refreshToken];
+    const values = [name, phone, email, address, detailAddress, birthDate, provider, token, profileImageUrl, nickname, refreshToken];
     const [result] = await db.query(query, values);
 
     res.status(201).json({ message: '회원가입 성공', userId: result.insertId, refreshToken });
