@@ -3,12 +3,16 @@ require('dotenv').config();
 
 // 시터 리스트 조회
 exports.getSitterList = async (req, res) => {
-  const { weekdays, startTime, endTime } = req.query;
+  const { weekdays, startTime, endTime, userId } = req.query;
   const searchDays = weekdays ? weekdays.split(',') : [];
   const dayConditions = searchDays.map((day) => `FIND_IN_SET('${day}', weekdays) > 0`).join(' OR ');
 
   let query = `SELECT * FROM sitter`;
   const conditions = [];
+
+  if (userId) {
+    conditions.push(`userId != ${db.escape(userId)}`);
+  }
 
   if (dayConditions) {
     conditions.push(`(${dayConditions})`);
@@ -34,18 +38,25 @@ exports.getSitterList = async (req, res) => {
 
 //시터 지원
 exports.applySitter = async (req, res) => {
-  const { name, image, region, description, experience, startTime, endTime, weekdays } = req.body;
-  console.log(req.body);
+  const { userId, name, image, region, description, experience, startTime, endTime, weekdays } = req.body;
 
-  if (!name || !image || !region || !description || !experience || !startTime || !endTime || !weekdays) {
+  if (!userId || !name || !image || !region || !description || !experience || !startTime || !endTime || !weekdays) {
     return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
   }
 
   try {
+    const [existingSitter] = await db.query(`SELECT * FROM sitter WHERE userId = ?`, [userId]);
+
+    if (existingSitter.length > 0) {
+      return res.status(409).json({ message: '이미 펫시터로 신청한 계정입니다.' });
+    }
+
     const [result] = await db.query(
-      `INSERT INTO sitter (name, image, region, description, experience, startTime, endTime, weekdays, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'confirmed')`,
-      [name, image, region, description, experience, startTime, endTime, weekdays]
+      `INSERT INTO sitter (userId, name, image, region, description, experience, startTime, endTime, weekdays, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'confirmed')`,
+      [userId, name, image, region, description, experience, startTime, endTime, weekdays]
     );
+
+    await db.query(`UPDATE member SET petsitter = 1 WHERE id = ?`, [userId]);
 
     res.status(201).json({ message: '펫시터 신청이 성공적으로 완료되었습니다.', sitterId: result.insertId });
   } catch (error) {

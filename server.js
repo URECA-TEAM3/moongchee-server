@@ -115,6 +115,7 @@ const createTables = async () => {
     await connection.query(`
       CREATE TABLE IF NOT EXISTS sitter (
         id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        userId VARCHAR(255) NOT NULL, 
         name VARCHAR(255) NOT NULL,
         image VARCHAR(255) NOT NULL,
         region VARCHAR(100) NOT NULL,
