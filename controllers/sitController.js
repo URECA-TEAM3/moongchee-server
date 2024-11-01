@@ -86,12 +86,12 @@ exports.getUserReservations = async (req, res) => {
             reservation.endTime,
             reservation.status,
             reservation.price,
-            member.name AS name,
-            member.profile_image_url AS sitter_profile_image
+            sitter.name AS name,
+            sitter.image AS profile_image
         FROM 
             reservation
         JOIN 
-            member ON reservation.sitter_id = member.id
+            sitter ON reservation.sitter_id = sitter.id
         WHERE 
             reservation.user_id = ?;
       `,
@@ -116,7 +116,7 @@ exports.getUserReservations = async (req, res) => {
             reservation.endTime,
             reservation.status,
             member.name AS name,
-            member.profile_image_url AS sitter_profile_image
+            member.profile_image_url AS profile_image
         FROM 
             reservation
         JOIN 
@@ -175,15 +175,16 @@ exports.getReservationWithDetails = async (req, res) => {
 // 예약내역 추가
 exports.createReservationWithDetails = async (req, res) => {
   const { user_id, sitter_id, requestDate, startTime, endTime, status, request, dogSize, pet, workingTime, price } = req.body;
+  console.log(price);
 
-  if (!user_id || !sitter_id || !requestDate || !startTime || !endTime) {
+  if (!user_id || !sitter_id || !requestDate || !startTime || !endTime || !price) {
     return res.status(400).json({ message: 'All main fields are required.' });
   }
 
   try {
     const [reservationResult] = await db.query(
-      `INSERT INTO reservation (user_id, sitter_id, requestDate, startTime, endTime, status) VALUES (?, ?, ?, ?, ?, ?)`,
-      [user_id, sitter_id, requestDate, startTime, endTime, status || 'reserved']
+      `INSERT INTO reservation (user_id, sitter_id, requestDate, startTime, endTime, status, price) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [user_id, sitter_id, requestDate, startTime, endTime, status || 'reserved', price]
     );
 
     const reservationId = reservationResult.insertId;
@@ -201,6 +202,28 @@ exports.createReservationWithDetails = async (req, res) => {
   } catch (error) {
     console.error('Error creating reservation with details:', error);
     res.status(500).json({ message: 'Failed to create reservation with details' });
+  }
+};
+
+// 예약 확정
+exports.confirmReservation = async (req, res) => {
+  const { reservation_id } = req.body;
+
+  if (!reservation_id) {
+    return res.status(400).json({ message: 'reservation_id is required' });
+  }
+
+  try {
+    const result = await db.query(`UPDATE reservation SET status = 'confirmed' WHERE id = ?`, [reservation_id]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Reservation not found' });
+    }
+
+    res.status(200).json({ message: 'Reservation confirmed successfully' });
+  } catch (error) {
+    console.error('Error cancelling reservation:', error);
+    res.status(500).json({ message: 'Failed to confirm reservation' });
   }
 };
 
