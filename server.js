@@ -2,23 +2,27 @@ const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
+const bodyParser = require('body-parser');
 dotenv.config();
 
 const authRoutes = require('./routes/authRoutes');
 const memberRoutes = require('./routes/memberRoutes');
 const petRoutes = require('./routes/petRoutes');
+const cartRoutes = require('./routes/cartRoutes');
 const sitterRoutes = require('./routes/sitterRoutes');
 const productRoutes = require('./routes/productRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 app.use(cors());
+app.use(bodyParser.json());
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
 app.use('/api/petsitter', sitterRoutes);
 app.use('/api/payments', paymentRoutes);
 
@@ -99,6 +103,16 @@ const createTables = async () => {
     `);
 
     await connection.query(`
+      CREATE TABLE IF NOT EXISTS cart (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        product_id BIGINT NOT NULL,
+        user_id BIGINT NOT NULL,
+        quantity INT NOT NULL,
+        checked BOOLEAN
+      );
+    `);
+
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS sitter (
         id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
         sitter_id INT NOT NULL,
@@ -112,6 +126,15 @@ const createTables = async () => {
         weekdays VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS order_table (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        user_id BIGINT NOT NULL,
+        total DOUBLE NOT NULL,
+        status VARCHAR(255) NOT NULL
       );
     `);
 
@@ -130,6 +153,16 @@ const createTables = async () => {
     `);
 
     await connection.query(`
+      CREATE TABLE IF NOT EXISTS orderItem (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        product_id BIGINT NOT NULL,
+        order_id BIGINT NOT NULL,
+        quantity INT NOT NULL,
+        price INT NOT NULL
+      );
+    `);
+
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS reservation_details (
         id BIGINT PRIMARY KEY AUTO_INCREMENT,
         reservation_id BIGINT NOT NULL,
@@ -143,7 +176,7 @@ const createTables = async () => {
         FOREIGN KEY (reservation_id) REFERENCES reservation(id) ON DELETE CASCADE
       );
     `);
-    
+
     await connection.query(`
       CREATE TABLE IF NOT EXISTS payment_verification (
         order_id VARCHAR(50) NOT NULL,
