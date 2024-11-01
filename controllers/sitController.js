@@ -32,6 +32,28 @@ exports.getSitterList = async (req, res) => {
   }
 };
 
+//시터 지원
+exports.applySitter = async (req, res) => {
+  const { name, image, region, description, experience, startTime, endTime, weekdays } = req.body;
+  console.log(req.body);
+
+  if (!name || !image || !region || !description || !experience || !startTime || !endTime || !weekdays) {
+    return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
+  }
+
+  try {
+    const [result] = await db.query(
+      `INSERT INTO sitter (name, image, region, description, experience, startTime, endTime, weekdays, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'confirmed')`,
+      [name, image, region, description, experience, startTime, endTime, weekdays]
+    );
+
+    res.status(201).json({ message: '펫시터 신청이 성공적으로 완료되었습니다.', sitterId: result.insertId });
+  } catch (error) {
+    console.error('펫시터 신청 에러:', error);
+    res.status(500).json({ message: '펫시터 신청에 실패했습니다.' });
+  }
+};
+
 // 예약 전체 조회
 exports.getUserReservations = async (req, res) => {
   const { user_id, user_type } = req.body;
@@ -52,6 +74,7 @@ exports.getUserReservations = async (req, res) => {
             reservation.startTime,
             reservation.endTime,
             reservation.status,
+            reservation.price,
             member.name AS name,
             member.profile_image_url AS sitter_profile_image
         FROM 

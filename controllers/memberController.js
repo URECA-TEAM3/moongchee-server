@@ -16,9 +16,9 @@ const generateVerificationCode = () => {
 };
 
 exports.signup = async (req, res) => {
-  const { name, phone, email, address, detailAddress, birthDate, provider, token, nickname, profileImageUrl } = req.body;
+  const { name, phone, email, address, detailaddress, birthDate, provider, token, nickname, profileImageUrl } = req.body;
 
-  console.log('Signup Request Data:', { name, phone, email, address, detailAddress, birthDate, provider, token, nickname, profileImageUrl });
+  console.log('Signup Request Data:', { name, phone, email, address, detailaddress, birthDate, provider, token, nickname, profileImageUrl });
 
   if (!name || !phone || !email || !address || !birthDate || !provider || !token || !nickname || !profileImageUrl) {
     return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
@@ -31,7 +31,7 @@ exports.signup = async (req, res) => {
     `;
 
     const refreshToken = generateRefreshToken(token);
-    const values = [name, phone, email, address, detailAddress, birthDate, provider, token, profileImageUrl, nickname, refreshToken];
+    const values = [name, phone, email, address, detailaddress, birthDate, provider, token, profileImageUrl, nickname, refreshToken];
     const [result] = await db.query(query, values);
 
     res.status(201).json({ message: '회원가입 성공', userId: result.insertId, refreshToken });
@@ -98,6 +98,49 @@ exports.sendEmailVerification = async (req, res) => {
     console.error('이메일 인증 오류:', error);
     res.status(500).json({ message: '이메일 전송에 실패했습니다.' });
   }
+};
+
+exports.updateProfile = async (req, res) => {
+  const { id, birthDate, email, name, petsitter, unique_id, nickname, phone, address, detailaddress, social_provider, profile_image_url } = req.body;
+
+  if (!id) {
+    return res.status(400).json('유효한 사용자 ID가 필요합니다.');
+  }
+
+  try {
+    const query = `
+      UPDATE member
+      SET nickname=?, phone=?, address=?, detailaddress=?, profile_image_url=?
+      WHERE id=?
+    `;
+    // values 배열의 순서가 쿼리와 일치하도록 수정
+    const values = [nickname, phone, address, detailaddress, profile_image_url, id];
+
+    const [result] = await db.query(query, values);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
+    }
+
+    // 업데이트된 사용자 데이터를 반환
+    res.status(200).json({
+      id,
+      unique_id,
+      name,
+      birthDate,
+      email,
+      petsitter,
+      social_provider,
+      nickname,
+      phone,
+      address,
+      detailaddress,
+      profile_image_url,
+    });
+  } catch (error) {
+    console.error('프로필 업데이트 오류 : ', error);
+    res.status(500).json({ message: '프로필 업데이트에 실패했습니다.' });
+  };
 };
 
 exports.updatePoints = async (req, res) => {
