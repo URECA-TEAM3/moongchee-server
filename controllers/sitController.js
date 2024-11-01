@@ -74,6 +74,7 @@ exports.getUserReservations = async (req, res) => {
             reservation.startTime,
             reservation.endTime,
             reservation.status,
+            reservation.price,
             member.name AS name,
             member.profile_image_url AS sitter_profile_image
         FROM 

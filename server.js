@@ -147,6 +147,7 @@ const createTables = async () => {
         startTime VARCHAR(50) NOT NULL,
         endTime VARCHAR(50) NOT NULL,
         status VARCHAR(50) NOT NULL,
+        price INT NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
       );
