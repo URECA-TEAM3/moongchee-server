@@ -133,8 +133,7 @@ const createTables = async () => {
       CREATE TABLE IF NOT EXISTS order_table (
         id BIGINT PRIMARY KEY AUTO_INCREMENT,
         user_id BIGINT NOT NULL,
-        total DOUBLE NOT NULL,
-        status VARCHAR(255) NOT NULL
+        total DOUBLE NOT NULL
       );
     `);
 
@@ -159,7 +158,9 @@ const createTables = async () => {
         product_id BIGINT NOT NULL,
         order_id BIGINT NOT NULL,
         quantity INT NOT NULL,
-        price INT NOT NULL
+        price INT NOT NULL,
+        status VARCHAR(255) NOT NULL,
+        order_date DATE
       );
     `);
 

@@ -89,11 +89,11 @@ exports.DeleteCartItems = async (req, res) => {
 };
 
 exports.postPayItems = async (req, res) => {
-  const { userId, status, total, productData } = req.body;
+  const { userId, status, total, productData, date } = req.body;
 
   try {
     // 1. order_table에 주문 정보 저장
-    const [orderResult] = await db.query('INSERT INTO order_table (user_id, total, status) VALUES (?, ?, ?)', [userId, total, status]);
+    const [orderResult] = await db.query('INSERT INTO order_table (user_id, total) VALUES (?, ?)', [userId, total]);
 
     const orderId = orderResult.insertId;
 
@@ -101,8 +101,8 @@ exports.postPayItems = async (req, res) => {
     const orderItemsQueries = productData.map((p) => {
       return db.query(
         `
-        INSERT INTO orderItem (product_id, order_id, quantity, price) VALUES (?, ?, ?, ?)`,
-        [p.product_id, orderId, p.quantity, p.price]
+        INSERT INTO orderItem (product_id, order_id, quantity, price, status, order_date) VALUES (?, ?, ?, ?, ?, ?)`,
+        [p.product_id, orderId, p.quantity, p.price, status, date]
       );
     });
 
