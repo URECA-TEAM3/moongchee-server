@@ -153,13 +153,14 @@ const createTables = async () => {
     `);
 
     await connection.query(`
-      CREATE TABLE IF NOT EXISTS orderItem (
+      CREATE TABLE IF NOT EXISTS order_item (
         id BIGINT PRIMARY KEY AUTO_INCREMENT,
         product_id BIGINT NOT NULL,
         order_id BIGINT NOT NULL,
         quantity INT NOT NULL,
         price INT NOT NULL,
-        status VARCHAR(255) NOT NULL
+        status VARCHAR(255) NOT NULL,
+        order_date DATE
       );
     `);
 
