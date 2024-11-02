@@ -97,11 +97,11 @@ exports.postPayItems = async (req, res) => {
 
     const orderId = orderResult.insertId;
 
-    // 2. orderItems 테이블에 상품 정보 저장
+    // 2. order_item 테이블에 상품 정보 저장
     const orderItemsQueries = productData.map((p) => {
       return db.query(
         `
-        INSERT INTO orderItem (product_id, order_id, quantity, price, status, order_date) VALUES (?, ?, ?, ?, ?, ?)`,
+        INSERT INTO order_item (product_id, order_id, quantity, price, status, order_date) VALUES (?, ?, ?, ?, ?, ?)`,
         [p.product_id, orderId, p.quantity, p.price, status, date]
       );
     });
