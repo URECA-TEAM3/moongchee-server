@@ -112,6 +112,14 @@ exports.postPayItems = async (req, res) => {
     // 3. 주문한 상품들 장바구니에서 제거
     await db.query('DELETE FROM cart WHERE user_id = ? AND checked = true', [userId]);
 
+    // 4. 결제금액만큼 포인트 차감
+    // 유저 포인트 조회
+    const result = await db.query('SELECT point FROM member WHERE id = ?', [userId]);
+    const userPoint = result[0][0].point;
+
+    // 결제 후 차감된 포인트 업데이트
+    await db.query('UPDATE member SET point = ? WHERE id = ?', [userPoint - total, userId]);
+
     res.status(200).json({ message: '결제 완료' });
   } catch (error) {
     console.error('주문 저장 중 오류 발생:', error);
