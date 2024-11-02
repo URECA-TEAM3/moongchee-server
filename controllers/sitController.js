@@ -137,7 +137,7 @@ exports.getUserReservations = async (req, res) => {
 
 // 예약내역 상세조회
 exports.getReservationWithDetails = async (req, res) => {
-  const { reservation_id } = req.params;
+  const reservation_id = req.params.id;
 
   try {
     const [reservation] = await db.query(
@@ -153,7 +153,8 @@ exports.getReservationWithDetails = async (req, res) => {
         detail.request,
         detail.dogSize,
         detail.workingTime,
-        detail.price
+        detail.price,
+        detail.pet
       FROM reservation
       JOIN reservation_details detail ON reservation.id = detail.reservation_id
       WHERE reservation.id = ?
@@ -161,11 +162,11 @@ exports.getReservationWithDetails = async (req, res) => {
       [reservation_id]
     );
 
-    if (!reservation) {
+    if (reservation.length === 0) {
       return res.status(404).json({ message: 'Reservation not found' });
     }
 
-    res.status(200).json({ data: reservation });
+    res.status(200).json({ data: reservation[0] });
   } catch (error) {
     console.error('Error fetching reservation details:', error);
     res.status(500).json({ message: 'Failed to fetch reservation details' });
