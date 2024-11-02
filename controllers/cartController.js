@@ -60,7 +60,6 @@ exports.saveCartItems = async (req, res) => {
   if (!user_id) {
     return res.status(400).send('User ID is required');
   } else {
-    console.log('user_id 존재', user_id, cartData);
   }
 
   try {
@@ -119,8 +118,9 @@ exports.postPayItems = async (req, res) => {
 
     // 결제 후 차감된 포인트 업데이트
     await db.query('UPDATE member SET point = ? WHERE id = ?', [userPoint - total, userId]);
+    const resultPoint = await db.query('SELECT point FROM member WHERE id = ?', [userId]);
 
-    res.status(200).json({ message: '결제 완료' });
+    res.status(200).json({ message: `결제 후 포인트 ${resultPoint[0][0].point}` });
   } catch (error) {
     console.error('주문 저장 중 오류 발생:', error);
     res.status(500).json({ message: '결제 실패' });
