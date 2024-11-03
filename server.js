@@ -160,7 +160,8 @@ const createTables = async () => {
         quantity INT NOT NULL,
         price INT NOT NULL,
         status VARCHAR(255) NOT NULL,
-        order_date DATE
+        order_date DATE,
+        user_id BIGINT NOT NULL
       );
     `);
 
