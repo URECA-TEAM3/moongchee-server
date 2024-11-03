@@ -118,3 +118,18 @@ exports.postPayItems = async (req, res) => {
     res.status(500).json({ message: '결제 실패' });
   }
 };
+
+// 구매 / 취소 내역 조회
+exports.getOrderHistory = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [orderHistory] = await db.query(`
+      SELECT * FROM order_item WHERE id = ?
+      `, 
+      [id]);
+    res.status(200).json({message: 'success', data: orderHistory});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({message: 'Failed'});
+  }
+}
