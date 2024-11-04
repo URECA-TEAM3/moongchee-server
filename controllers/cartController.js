@@ -60,7 +60,6 @@ exports.saveCartItems = async (req, res) => {
   if (!user_id) {
     return res.status(400).send('User ID is required');
   } else {
-    console.log('user_id 존재', user_id, cartData);
   }
 
   try {
@@ -78,7 +77,7 @@ exports.saveCartItems = async (req, res) => {
 };
 
 exports.DeleteCartItems = async (req, res) => {
-  const { cart_id } = req.params; // cart_id를 직접 가져옵니다.
+  const { cart_id } = req.params;
   try {
     await db.query('DELETE FROM cart WHERE id = ?', [cart_id]);
     res.status(200).json({ message: '장바구니 상품 삭제 성공.' });
@@ -89,20 +88,22 @@ exports.DeleteCartItems = async (req, res) => {
 };
 
 exports.postPayItems = async (req, res) => {
-  const { userId, status, total, productData } = req.body;
+  const { userId, status, total, productData, date } = req.body;
+
+  console.log(productData);
 
   try {
     // 1. order_table에 주문 정보 저장
-    const [orderResult] = await db.query('INSERT INTO order_table (user_id, total, status) VALUES (?, ?, ?)', [userId, total, status]);
+    const [orderResult] = await db.query('INSERT INTO order_table (user_id, total) VALUES (?, ?)', [userId, total]);
 
     const orderId = orderResult.insertId;
 
-    // 2. orderItems 테이블에 상품 정보 저장
+    // 2. order_item 테이블에 상품 정보 저장
     const orderItemsQueries = productData.map((p) => {
       return db.query(
         `
-        INSERT INTO orderItem (product_id, order_id, quantity, price) VALUES (?, ?, ?, ?)`,
-        [p.product_id, orderId, p.quantity, p.price]
+        INSERT INTO order_item (product_id, order_id, quantity, price, status, order_date, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [p.product_id, orderId, p.quantity, p.price, status, date, userId]
       );
     });
 
@@ -110,11 +111,55 @@ exports.postPayItems = async (req, res) => {
     await Promise.all(orderItemsQueries);
 
     // 3. 주문한 상품들 장바구니에서 제거
-    await db.query('DELETE FROM cart WHERE user_id = ? AND checked = true', [userId]);
+    // await db.query('DELETE FROM cart WHERE user_id = ? AND checked = true', [userId]);
 
-    res.status(200).json({ message: '결제 완료' });
+    productData.map((p) => {
+      return db.query('DELETE FROM cart WHERE user_id = ? AND product_id = ?', [userId, p.product_id]);
+    });
+
+    // 4. 결제금액만큼 포인트 차감
+    // 유저 포인트 조회
+    const result = await db.query('SELECT point FROM member WHERE id = ?', [userId]);
+    const userPoint = result[0][0].point;
+
+    // 결제 후 차감된 포인트 업데이트
+    await db.query('UPDATE member SET point = ? WHERE id = ?', [userPoint - total, userId]);
+    const resultPoint = await db.query('SELECT point FROM member WHERE id = ?', [userId]);
+
+    res.status(200).json({ message: `결제 후 포인트 ${resultPoint[0][0].point}` });
   } catch (error) {
     console.error('주문 저장 중 오류 발생:', error);
     res.status(500).json({ message: '결제 실패' });
   }
 };
+
+// 구매 / 취소 내역 조회
+exports.getOrderHistory = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [orderHistory] = await db.query(`
+      SELECT * FROM order_item WHERE user_id = ?
+      `, 
+      [id]);
+    res.status(200).json({message: 'success', data: orderHistory});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({message: 'Failed'});
+  }
+}
+
+// 환불 상품 status 변경
+exports.changeStatusRefund = async (req, res) => {
+  const {orderItemId, status} = req.body;
+  try {
+    const [statusRefund] = await db.query(`
+      UPDATE order_item
+      SET status = ?
+      WHERE id=?
+      `, [status, orderItemId]);
+    res.status(200).json({message: '환불 처리 완료', data: statusRefund});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({message: '환불 처리 실패'});
+  }
+}
