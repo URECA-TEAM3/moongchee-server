@@ -36,6 +36,28 @@ exports.getSitterList = async (req, res) => {
   }
 };
 
+// 시터 상세 조회
+exports.getSitterByUserId = async (req, res) => {
+  const { id } = req.query;
+
+  if (!id) {
+    return res.status(400).json({ message: 'userId is required' });
+  }
+
+  try {
+    const [sitter] = await db.query(`SELECT * FROM sitter WHERE userId = ?`, [id]);
+
+    if (sitter.length === 0) {
+      return res.status(404).json({ message: 'Sitter not found' });
+    }
+
+    res.status(200).json({ message: 'Sitter data retrieved successfully', data: sitter[0] });
+  } catch (error) {
+    console.error('Error fetching sitter data:', error);
+    res.status(500).json({ message: 'Failed to retrieve sitter data' });
+  }
+};
+
 //시터 지원
 exports.applySitter = async (req, res) => {
   const { userId, name, image, region, description, experience, startTime, endTime, weekdays } = req.body;
@@ -58,10 +80,34 @@ exports.applySitter = async (req, res) => {
 
     await db.query(`UPDATE member SET petsitter = 1 WHERE id = ?`, [userId]);
 
-    res.status(201).json({ message: '펫시터 신청이 성공적으로 완료되었습니다.', sitterId: result.insertId });
+    res.status(200).json({ message: '펫시터 신청이 성공적으로 완료되었습니다.', sitterId: result.insertId });
   } catch (error) {
     console.error('펫시터 신청 에러:', error);
     res.status(500).json({ message: '펫시터 신청에 실패했습니다.' });
+  }
+};
+
+exports.updateSitterByUserId = async (req, res) => {
+  const { userId, name, image, region, description, experience, startTime, endTime, weekdays, status } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ message: 'userId는 필수입니다.' });
+  }
+
+  try {
+    const [result] = await db.query(
+      `UPDATE sitter SET name = ?, image = ?, region = ?, description = ?, experience = ?, startTime = ?, endTime = ?, weekdays = ?, status = ? WHERE userId = ?`,
+      [name, image, region, description, experience, startTime, endTime, weekdays, status, userId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: '해당 userId를 가진 시터를 찾을 수 없습니다.' });
+    }
+
+    res.status(200).json({ message: '시터 정보가 성공적으로 수정되었습니다.' });
+  } catch (error) {
+    console.error('시터 정보 수정 에러:', error);
+    res.status(500).json({ message: '시터 정보 수정에 실패했습니다.' });
   }
 };
 
