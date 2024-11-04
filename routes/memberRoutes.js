@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { signup, checkNickname, updateProfile, updatePoints, sendEmailVerification, getPoint } = require('../controllers/memberController');
+const { updateProfileInCart, signup, checkNickname, updateProfile, updatePoints, sendEmailVerification, getPoint } = require('../controllers/memberController');
 
 router.post('/signup', signup);
 router.post('/check-nickname', checkNickname);
@@ -10,5 +10,6 @@ router.get('/point/:id', getPoint);
 
 // 프로필 수정
 router.put('/update-profile', updateProfile);
+router.put('/update-profile-in-cart', updateProfileInCart);
 
 module.exports = router;

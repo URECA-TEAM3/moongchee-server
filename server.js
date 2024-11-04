@@ -18,6 +18,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 
+app.get('/', (req, res) => res.send('Express on Vercel'));
+
 app.use('/api/auth', authRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/pets', petRoutes);
@@ -133,8 +135,7 @@ const createTables = async () => {
       CREATE TABLE IF NOT EXISTS order_table (
         id BIGINT PRIMARY KEY AUTO_INCREMENT,
         user_id BIGINT NOT NULL,
-        total DOUBLE NOT NULL,
-        status VARCHAR(255) NOT NULL
+        total DOUBLE NOT NULL
       );
     `);
 
@@ -154,12 +155,15 @@ const createTables = async () => {
     `);
 
     await connection.query(`
-      CREATE TABLE IF NOT EXISTS orderItem (
+      CREATE TABLE IF NOT EXISTS order_item (
         id BIGINT PRIMARY KEY AUTO_INCREMENT,
         product_id BIGINT NOT NULL,
         order_id BIGINT NOT NULL,
         quantity INT NOT NULL,
-        price INT NOT NULL
+        price INT NOT NULL,
+        status VARCHAR(255) NOT NULL,
+        order_date DATE,
+        user_id BIGINT NOT NULL
       );
     `);
 

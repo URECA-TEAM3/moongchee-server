@@ -119,7 +119,7 @@ exports.updateProfile = async (req, res) => {
     const [result] = await db.query(query, values);
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "사용자를 찾을 수 없습니다." });
+      return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
     }
 
     // 업데이트된 사용자 데이터를 반환
@@ -140,7 +140,7 @@ exports.updateProfile = async (req, res) => {
   } catch (error) {
     console.error('프로필 업데이트 오류 : ', error);
     res.status(500).json({ message: '프로필 업데이트에 실패했습니다.' });
-  };
+  }
 };
 
 exports.updatePoints = async (req, res) => {
@@ -179,5 +179,43 @@ exports.getPoint = async (req, res) => {
   } catch (error) {
     console.error('포인트 조회 오류:', error);
     res.status(500).json({ message: '포인트 조회 실패' });
+  }
+};
+
+exports.updateProfileInCart = async (req, res) => {
+  const { id, name, phone, address, detailaddress } = req.body;
+  console.log(name);
+
+  if (!id) {
+    return res.status(400).json('유효한 사용자 ID가 필요합니다.');
+  }
+
+  try {
+    const query = `
+      UPDATE member
+      SET name=?, phone=?, address=?, detailaddress=?
+      WHERE id=?
+    `;
+
+    // values 배열의 순서가 쿼리와 일치하도록 수정
+    const values = [name, phone, address, detailaddress, id];
+
+    const [result] = await db.query(query, values);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+    }
+
+    // 업데이트된 사용자 데이터를 반환
+    res.status(200).json({
+      id,
+      name,
+      phone,
+      address,
+      detailaddress,
+    });
+  } catch (error) {
+    console.error('프로필 업데이트 오류 : ', error);
+    res.status(500).json({ message: '프로필 업데이트에 실패했습니다.' });
   }
 };
