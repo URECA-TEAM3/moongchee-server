@@ -77,7 +77,7 @@ exports.saveCartItems = async (req, res) => {
 };
 
 exports.DeleteCartItems = async (req, res) => {
-  const { cart_id } = req.params; // cart_id를 직접 가져옵니다.
+  const { cart_id } = req.params;
   try {
     await db.query('DELETE FROM cart WHERE id = ?', [cart_id]);
     res.status(200).json({ message: '장바구니 상품 삭제 성공.' });
@@ -89,6 +89,8 @@ exports.DeleteCartItems = async (req, res) => {
 
 exports.postPayItems = async (req, res) => {
   const { userId, status, total, productData, date } = req.body;
+
+  console.log(productData);
 
   try {
     // 1. order_table에 주문 정보 저장
@@ -109,7 +111,11 @@ exports.postPayItems = async (req, res) => {
     await Promise.all(orderItemsQueries);
 
     // 3. 주문한 상품들 장바구니에서 제거
-    await db.query('DELETE FROM cart WHERE user_id = ? AND checked = true', [userId]);
+    // await db.query('DELETE FROM cart WHERE user_id = ? AND checked = true', [userId]);
+
+    productData.map((p) => {
+      return db.query('DELETE FROM cart WHERE user_id = ? AND product_id = ?', [userId, p.product_id]);
+    });
 
     // 4. 결제금액만큼 포인트 차감
     // 유저 포인트 조회
