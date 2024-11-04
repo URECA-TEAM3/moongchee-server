@@ -199,7 +199,7 @@ exports.createReservationWithDetails = async (req, res) => {
       price,
     ]);
 
-    res.status(201).json({ message: 'Reservation with details created successfully', reservationId });
+    res.status(200).json({ message: 'Reservation with details created successfully', reservationId });
   } catch (error) {
     console.error('Error creating reservation with details:', error);
     res.status(500).json({ message: 'Failed to create reservation with details' });
