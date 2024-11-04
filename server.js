@@ -18,6 +18,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 
+app.get('/', (req, res) => res.send('Express on Vercel'));
+
 app.use('/api/auth', authRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/pets', petRoutes);
