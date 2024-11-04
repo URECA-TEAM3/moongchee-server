@@ -117,6 +117,7 @@ const createTables = async () => {
     await connection.query(`
       CREATE TABLE IF NOT EXISTS sitter (
         id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        userId VARCHAR(255) NOT NULL, 
         name VARCHAR(255) NOT NULL,
         image VARCHAR(255) NOT NULL,
         region VARCHAR(100) NOT NULL,
@@ -175,7 +176,7 @@ const createTables = async () => {
         dogSize VARCHAR(50),
         pet VARCHAR(50),
         workingTime VARCHAR(50),
-        price DECIMAL(10, 2),
+        price DECIMAL(10, 2) DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         FOREIGN KEY (reservation_id) REFERENCES reservation(id) ON DELETE CASCADE
