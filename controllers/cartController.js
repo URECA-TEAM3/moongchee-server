@@ -102,8 +102,8 @@ exports.postPayItems = async (req, res) => {
     const orderItemsQueries = productData.map((p) => {
       return db.query(
         `
-        INSERT INTO order_item (product_id, order_id, quantity, price, status, order_date) VALUES (?, ?, ?, ?, ?, ?)`,
-        [p.product_id, orderId, p.quantity, p.price, status, date]
+        INSERT INTO order_item (product_id, order_id, quantity, price, status, order_date, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [p.product_id, orderId, p.quantity, p.price, status, date, userId]
       );
     });
 
@@ -132,3 +132,34 @@ exports.postPayItems = async (req, res) => {
     res.status(500).json({ message: '결제 실패' });
   }
 };
+
+// 구매 / 취소 내역 조회
+exports.getOrderHistory = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const [orderHistory] = await db.query(`
+      SELECT * FROM order_item WHERE user_id = ?
+      `, 
+      [id]);
+    res.status(200).json({message: 'success', data: orderHistory});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({message: 'Failed'});
+  }
+}
+
+// 환불 상품 status 변경
+exports.changeStatusRefund = async (req, res) => {
+  const {orderItemId, status} = req.body;
+  try {
+    const [statusRefund] = await db.query(`
+      UPDATE order_item
+      SET status = ?
+      WHERE id=?
+      `, [status, orderItemId]);
+    res.status(200).json({message: '환불 처리 완료', data: statusRefund});
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({message: '환불 처리 실패'});
+  }
+}
