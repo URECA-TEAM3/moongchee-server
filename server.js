@@ -28,29 +28,29 @@ app.use('/api/cart', cartRoutes);
 app.use('/api/petsitter', sitterRoutes);
 app.use('/api/payments', paymentRoutes);
 
+// const createDatabase = async () => {
+//   try {
+//     const connection = await mysql.createConnection({
+//       host: process.env.DB_HOST,
+//       user: process.env.DB_USER,
+//       password: process.env.DB_PASSWORD,
+//     });
+
+//     await connection.query('CREATE DATABASE IF NOT EXISTS Moongchee');
+//     console.log('moongchee 데이터베이스가 생성되었거나 이미 존재.');
+//     await connection.end();
+//   } catch (err) {
+//     console.error('데이터베이스 생성  오류 :', err);
+//   }
+// };
+
 const createDatabase = async () => {
   try {
-    const connection = await mysql.createConnection({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-    });
-
-    await connection.query('CREATE DATABASE IF NOT EXISTS Moongchee');
-    console.log('moongchee 데이터베이스가 생성되었거나 이미 존재.');
-    await connection.end();
-  } catch (err) {
-    console.error('데이터베이스 생성  오류 :', err);
-  }
-};
-
-const createTables = async () => {
-  try {
     const db = mysql.createPool({
-      host: process.env.DB_HOST,
+      host: process.env.DB_PORT,
       user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: 'moongchee',
+      password: process.env.DB_AWS_PASSWORD,
+      database: 'database-1',
     });
     const connection = await db.getConnection();
 
@@ -210,8 +210,8 @@ const createTables = async () => {
 };
 
 (async () => {
+  // await createDatabase();
   await createDatabase();
-  await createTables();
 
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
