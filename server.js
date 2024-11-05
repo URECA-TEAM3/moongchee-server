@@ -12,6 +12,7 @@ const cartRoutes = require('./routes/cartRoutes');
 const sitterRoutes = require('./routes/sitterRoutes');
 const productRoutes = require('./routes/productRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 app.use(cors());
@@ -27,6 +28,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/petsitter', sitterRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 const createDatabase = async () => {
   try {
@@ -199,7 +201,18 @@ const createTables = async () => {
         payment_key VARCHAR(50) NOT NULL,
         FOREIGN KEY (order_id) REFERENCES payment_verification(order_id) ON DELETE CASCADE
       );
-      `);
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS notification (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        sending_name VARCHAR(50) NOT NULL,
+        receive_id BIGINT NOT NULL,
+        receive_name VARCHAR(50) NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        status VARCHAR(50) NOT NULL
+      );
+    `);
 
     console.log('테이블이 성공적으로 생성되었습니다.');
     connection.release();
