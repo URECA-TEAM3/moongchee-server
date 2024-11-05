@@ -151,6 +151,21 @@ exports.getUserReservations = async (req, res) => {
     }
   } else {
     try {
+      const [sitterResult] = await db.query(
+        `
+        SELECT id AS sitter_id 
+        FROM sitter 
+        WHERE userId = ?;
+        `,
+        [user_id]
+      );
+
+      if (sitterResult.length === 0) {
+        return res.status(404).json({ message: 'Sitter not found for the given user_id' });
+      }
+
+      const sitter_id = sitterResult[0].sitter_id;
+
       const [reservations] = await db.query(
         `
         SELECT 
@@ -170,7 +185,7 @@ exports.getUserReservations = async (req, res) => {
         WHERE 
             reservation.sitter_id = ?;
       `,
-        [user_id]
+        [sitter_id]
       );
 
       res.status(200).json({ message: 'Reservations fetched successfully', data: reservations });
