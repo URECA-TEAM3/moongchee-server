@@ -3,7 +3,7 @@ require('dotenv').config();
 
 // 시터 리스트 조회
 exports.getSitterList = async (req, res) => {
-  const { weekdays, startTime, endTime, userId } = req.query;
+  const { weekdays, startTime, endTime, userId, region } = req.query;
   const searchDays = weekdays ? weekdays.split(',') : [];
   const dayConditions = searchDays.map((day) => `FIND_IN_SET('${day}', weekdays) > 0`).join(' OR ');
 
@@ -23,9 +23,15 @@ exports.getSitterList = async (req, res) => {
     conditions.push(`endTime >= '${endTime}'`);
   }
 
+  if (region) {
+    conditions.push(`region = ${db.escape(region)}`);
+  }
+
   if (conditions.length > 0) {
     query += ` WHERE ` + conditions.join(' AND ');
   }
+
+  console.log(query);
 
   try {
     const [sitters] = await db.query(query);
