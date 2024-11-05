@@ -30,29 +30,14 @@ app.use('/api/petsitter', sitterRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/notifications', notificationRoutes);
 
-const createDatabase = async () => {
-  try {
-    const connection = await mysql.createConnection({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-    });
-
-    await connection.query('CREATE DATABASE IF NOT EXISTS Moongchee');
-    console.log('moongchee 데이터베이스가 생성되었거나 이미 존재.');
-    await connection.end();
-  } catch (err) {
-    console.error('데이터베이스 생성  오류 :', err);
-  }
-};
-
 const createTables = async () => {
   try {
     const db = mysql.createPool({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: 'moongchee',
+      host: process.env.DB_AWS_HOST,
+      user: process.env.DB_AWS_USER,
+      password: process.env.DB_AWS_PASSWORD,
+      database: process.env.DB_AWS_NAME,
+      port: process.env.DB_AWS_PORT,
     });
     const connection = await db.getConnection();
 
@@ -223,7 +208,6 @@ const createTables = async () => {
 };
 
 (async () => {
-  await createDatabase();
   await createTables();
 
   const PORT = process.env.PORT || 3000;

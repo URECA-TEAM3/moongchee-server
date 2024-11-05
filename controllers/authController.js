@@ -15,12 +15,9 @@ exports.googleLogin = async (req, res) => {
   try {
     const googleResponse = await axios.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`);
     const userId = googleResponse.data.sub;
-
     const [existingUser] = await db.query('SELECT id, unique_id FROM member WHERE unique_id = ?', [userId]);
-
     const accessToken = generateAccessToken(userId);
     const refreshToken = generateRefreshToken(userId);
-
     if (existingUser.length > 0) {
       const [userData] = await db.query('SELECT * FROM member WHERE unique_id = ?', [userId]);
 
