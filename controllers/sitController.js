@@ -297,11 +297,13 @@ exports.cancelReservation = async (req, res) => {
 };
 
 exports.getSitterInfoById = async (req, res) => {
+  console.log(req.params.id);
   // const { userId } = req.params.id;
   // console.log(req.params.id);
 
   try {
     const [result] = await db.query(`SELECT * FROM sitter WHERE userId=?`, [req.params.id]);
+    console.log(result);
     res.status(200).json({message: '펫시터 정보 조회 성공', data: result})
   } catch (error) {
     console.error(error);
