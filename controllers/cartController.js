@@ -111,8 +111,6 @@ exports.postPayItems = async (req, res) => {
     await Promise.all(orderItemsQueries);
 
     // 3. 주문한 상품들 장바구니에서 제거
-    // await db.query('DELETE FROM cart WHERE user_id = ? AND checked = true', [userId]);
-
     productData.map((p) => {
       return db.query('DELETE FROM cart WHERE user_id = ? AND product_id = ?', [userId, p.product_id]);
     });
