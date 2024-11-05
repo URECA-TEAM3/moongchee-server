@@ -44,6 +44,7 @@ exports.googleLogin = async (req, res) => {
           unique_id: userData[0].unique_id,
           profile_image_url: userData[0].profile_image_url,
           nickname: userData[0].nickname,
+          point: userData[0].point,
         },
       });
     } else {
@@ -104,6 +105,8 @@ exports.kakaoLogin = async (req, res) => {
           unique_id: userData[0].unique_id,
           profile_image_url: userData[0].profile_image_url,
           nickname: userData[0].nickname,
+          email: userData[0].email,
+          point: userData[0].point,
         },
       });
     } else {
@@ -159,7 +162,9 @@ exports.getUserInfo = async (req, res) => {
     const { userId } = req.user;
     console.log('요청된 유저 ID:', userId);
 
-    const [user] = await db.query('SELECT id, name, social_provider, phone, email, address, profile_image_url FROM member WHERE unique_id = ?', [userId]);
+    const [user] = await db.query('SELECT id, name, social_provider, phone, email, address, profile_image_url, point FROM member WHERE unique_id = ?', [
+      userId,
+    ]);
 
     if (user.length === 0) {
       console.log('유저를 찾을 수 없음');
