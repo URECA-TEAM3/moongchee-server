@@ -24,3 +24,17 @@ exports.updateNotiStatus = async (req, res) => {
         console.error(error);
     }
 }
+
+exports.saveNotification = async (req, res) => {
+    const { sending_name, receive_id, receive_name, type, status } = req.body;
+  
+    try {
+        const query = `INSERT INTO notification (sending_name, receive_id, receive_name, type, status) VALUES (?, ?, ?, ?, ?)`;
+        const values = [sending_name, receive_id, receive_name, type, status];
+        const [result] = await db.query(query, values);
+    
+        res.status(200).json({ message: '알림 저장 성공'});
+        } catch (error) {
+        console.error('결제 정보 임시 저장 오류:', error);
+    }
+};

@@ -295,3 +295,15 @@ exports.cancelReservation = async (req, res) => {
     res.status(500).json({ message: 'Failed to cancel reservation' });
   }
 };
+
+exports.getSitterInfoById = async (req, res) => {
+  // const { userId } = req.params.id;
+  // console.log(req.params.id);
+
+  try {
+    const [result] = await db.query(`SELECT * FROM sitter WHERE userId=?`, [req.params.id]);
+    res.status(200).json({message: '펫시터 정보 조회 성공', data: result})
+  } catch (error) {
+    console.error(error);
+  }
+}
