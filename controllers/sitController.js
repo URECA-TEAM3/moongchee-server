@@ -3,7 +3,7 @@ require('dotenv').config();
 
 // 시터 리스트 조회
 exports.getSitterList = async (req, res) => {
-  const { weekdays, startTime, endTime, userId } = req.query;
+  const { weekdays, startTime, endTime, userId, region } = req.query;
   const searchDays = weekdays ? weekdays.split(',') : [];
   const dayConditions = searchDays.map((day) => `FIND_IN_SET('${day}', weekdays) > 0`).join(' OR ');
 
@@ -23,9 +23,15 @@ exports.getSitterList = async (req, res) => {
     conditions.push(`endTime >= '${endTime}'`);
   }
 
+  if (region) {
+    conditions.push(`region = ${db.escape(region)}`);
+  }
+
   if (conditions.length > 0) {
     query += ` WHERE ` + conditions.join(' AND ');
   }
+
+  console.log(query);
 
   try {
     const [sitters] = await db.query(query);
@@ -151,6 +157,21 @@ exports.getUserReservations = async (req, res) => {
     }
   } else {
     try {
+      const [sitterResult] = await db.query(
+        `
+        SELECT id AS sitter_id 
+        FROM sitter 
+        WHERE userId = ?;
+        `,
+        [user_id]
+      );
+
+      if (sitterResult.length === 0) {
+        return res.status(404).json({ message: 'Sitter not found for the given user_id' });
+      }
+
+      const sitter_id = sitterResult[0].sitter_id;
+
       const [reservations] = await db.query(
         `
         SELECT 
@@ -170,7 +191,7 @@ exports.getUserReservations = async (req, res) => {
         WHERE 
             reservation.sitter_id = ?;
       `,
-        [user_id]
+        [sitter_id]
       );
 
       res.status(200).json({ message: 'Reservations fetched successfully', data: reservations });
@@ -295,3 +316,17 @@ exports.cancelReservation = async (req, res) => {
     res.status(500).json({ message: 'Failed to cancel reservation' });
   }
 };
+
+exports.getSitterInfoById = async (req, res) => {
+  console.log(req.params.id);
+  // const { userId } = req.params.id;
+  // console.log(req.params.id);
+
+  try {
+    const [result] = await db.query(`SELECT * FROM sitter WHERE userId=?`, [req.params.id]);
+    console.log(result);
+    res.status(200).json({message: '펫시터 정보 조회 성공', data: result})
+  } catch (error) {
+    console.error(error);
+  }
+}

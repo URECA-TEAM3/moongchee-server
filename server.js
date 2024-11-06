@@ -12,6 +12,7 @@ const cartRoutes = require('./routes/cartRoutes');
 const sitterRoutes = require('./routes/sitterRoutes');
 const productRoutes = require('./routes/productRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 app.use(cors());
@@ -27,30 +28,16 @@ app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/petsitter', sitterRoutes);
 app.use('/api/payments', paymentRoutes);
-
-const createDatabase = async () => {
-  try {
-    const connection = await mysql.createConnection({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-    });
-
-    await connection.query('CREATE DATABASE IF NOT EXISTS Moongchee');
-    console.log('moongchee 데이터베이스가 생성되었거나 이미 존재.');
-    await connection.end();
-  } catch (err) {
-    console.error('데이터베이스 생성  오류 :', err);
-  }
-};
+app.use('/api/notifications', notificationRoutes);
 
 const createTables = async () => {
   try {
     const db = mysql.createPool({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: 'moongchee',
+      host: process.env.DB_AWS_HOST,
+      user: process.env.DB_AWS_USER,
+      password: process.env.DB_AWS_PASSWORD,
+      database: process.env.DB_AWS_NAME,
+      port: process.env.DB_AWS_PORT,
     });
     const connection = await db.getConnection();
 
@@ -200,7 +187,18 @@ const createTables = async () => {
         payment_key VARCHAR(50) NOT NULL,
         FOREIGN KEY (order_id) REFERENCES payment_verification(order_id) ON DELETE CASCADE
       );
-      `);
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS notification (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        sending_name VARCHAR(50) NOT NULL,
+        receive_id BIGINT NOT NULL,
+        receive_name VARCHAR(50) NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        status VARCHAR(50) NOT NULL
+      );
+    `);
 
     console.log('테이블이 성공적으로 생성되었습니다.');
     connection.release();
@@ -210,7 +208,6 @@ const createTables = async () => {
 };
 
 (async () => {
-  await createDatabase();
   await createTables();
 
   const PORT = process.env.PORT || 3000;
