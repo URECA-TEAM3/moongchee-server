@@ -24,8 +24,6 @@
    - 소셜 로그인 (Google, Kakao)
    - 간편 결제 (토스페이먼츠)
 
----
-
 ## **Table of Contents**
 
 - [Project Setup](#project-setup)
