@@ -12,4 +12,6 @@ router.post('/reservation/add', sitController.createReservationWithDetails);
 router.post('/reservation/confirm', sitController.confirmReservation);
 router.post('/reservation/cancel', sitController.cancelReservation);
 
+router.get('/detail/:id', sitController.getSitterInfoById);
+
 module.exports = router;
