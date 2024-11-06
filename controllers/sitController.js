@@ -31,7 +31,7 @@ exports.getSitterList = async (req, res) => {
     query += ` WHERE ` + conditions.join(' AND ');
   }
 
-  console.log(query);
+  // console.log(query);
 
   try {
     const [sitters] = await db.query(query);
@@ -317,7 +317,26 @@ exports.cancelReservation = async (req, res) => {
   }
 };
 
-exports.getSitterInfoById = async (req, res) => {
+exports.getSitterInfoBySitterId = async (req, res) => {
+  console.log(req.params.id);
+  // const { userId } = req.params.id;
+  // console.log(req.params.id);
+
+  try {
+    const [result] = await db.query(`SELECT * FROM sitter WHERE id=?`, [req.params.id]);
+    console.log(result);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'sitter Info not found' });
+    }
+
+    res.status(200).json({message: '펫시터 정보 조회 성공', data: result})
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+exports.getSitterInfoByUserId = async (req, res) => {
   console.log(req.params.id);
   // const { userId } = req.params.id;
   // console.log(req.params.id);
@@ -325,6 +344,11 @@ exports.getSitterInfoById = async (req, res) => {
   try {
     const [result] = await db.query(`SELECT * FROM sitter WHERE userId=?`, [req.params.id]);
     console.log(result);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'sitter Info not found' });
+    }
+
     res.status(200).json({message: '펫시터 정보 조회 성공', data: result})
   } catch (error) {
     console.error(error);
