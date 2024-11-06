@@ -72,6 +72,7 @@
 - **Storage**: Firebase Storage
 - **Payment Integration**: Toss Payments SDK
 - **API**: Daum Postcode API (for address lookup)
+- **Deployment**: Vercel & AWS
 
 ## **API Endpoints**
 
