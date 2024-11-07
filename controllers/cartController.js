@@ -111,8 +111,6 @@ exports.postPayItems = async (req, res) => {
     await Promise.all(orderItemsQueries);
 
     // 3. 주문한 상품들 장바구니에서 제거
-    // await db.query('DELETE FROM cart WHERE user_id = ? AND checked = true', [userId]);
-
     productData.map((p) => {
       return db.query('DELETE FROM cart WHERE user_id = ? AND product_id = ?', [userId, p.product_id]);
     });
@@ -137,29 +135,34 @@ exports.postPayItems = async (req, res) => {
 exports.getOrderHistory = async (req, res) => {
   const { id } = req.params;
   try {
-    const [orderHistory] = await db.query(`
+    const [orderHistory] = await db.query(
+      `
       SELECT * FROM order_item WHERE user_id = ?
-      `, 
-      [id]);
-    res.status(200).json({message: 'success', data: orderHistory});
+      `,
+      [id]
+    );
+    res.status(200).json({ message: 'success', data: orderHistory });
   } catch (error) {
     console.error(error);
-    res.status(500).json({message: 'Failed'});
+    res.status(500).json({ message: 'Failed' });
   }
-}
+};
 
 // 환불 상품 status 변경
 exports.changeStatusRefund = async (req, res) => {
-  const {orderItemId, status} = req.body;
+  const { orderItemId, status } = req.body;
   try {
-    const [statusRefund] = await db.query(`
+    const [statusRefund] = await db.query(
+      `
       UPDATE order_item
       SET status = ?
       WHERE id=?
-      `, [status, orderItemId]);
-    res.status(200).json({message: '환불 처리 완료', data: statusRefund});
+      `,
+      [status, orderItemId]
+    );
+    res.status(200).json({ message: '환불 처리 완료', data: statusRefund });
   } catch (error) {
     console.error(error);
-    res.status(500).json({message: '환불 처리 실패'});
+    res.status(500).json({ message: '환불 처리 실패' });
   }
-}
+};

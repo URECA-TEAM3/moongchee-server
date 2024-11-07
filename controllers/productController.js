@@ -66,17 +66,17 @@ exports.getProduct = async (req, res) => {
 
 // 여러 ID에 해당하는 상품 조회
 exports.getProductsByIds = async (req, res) => {
-  const {ids} = req.body;
-  if (!ids || !Array.isArray(ids) || ids.length===0) {
-    return res.status(400).json({message: "유효한 ID 배열 X"})
+  const { ids } = req.body;
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).json({ message: '유효한 ID 배열 X' });
   }
   try {
     const placeholders = ids.map(() => '?').join(',');
     const query = `SELECT * FROM product WHERE id IN (${placeholders})`;
     const [products] = await db.query(query, ids);
-    res.status(200).json({message: "특정 ID 상품 조회 성공", data: products});
+    res.status(200).json({ message: '특정 ID 상품 조회 성공', data: products });
   } catch (error) {
     console.error(error);
-    res.status(500).json({message: "특정 ID 상품 조회 실패"});
+    res.status(500).json({ message: '특정 ID 상품 조회 실패' });
   }
-}
+};
