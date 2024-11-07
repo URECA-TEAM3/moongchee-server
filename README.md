@@ -9,7 +9,7 @@
 ![Version](https://img.shields.io/github/v/release/URECA-TEAM3/moongchee-client)
 ![Last Commit](https://img.shields.io/github/last-commit/URECA-TEAM3/moongchee-client)
 
-**Server Repo**: [Moongchee Server](https://github.com/URECA-TEAM3/moongchee-server)
+**Client Repo**: [Moongchee Client](https://github.com/URECA-TEAM3/moongchee-client)
 
 <h2>목차</h2>
 
