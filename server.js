@@ -15,7 +15,13 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: ['https://moongchee.vercel.app', 'http://localhost:5173'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+  })
+);
 app.use(bodyParser.json());
 app.use(express.json());
 
