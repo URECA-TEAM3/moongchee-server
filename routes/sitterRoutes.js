@@ -12,6 +12,10 @@ router.post('/reservation/add', sitController.createReservationWithDetails);
 router.post('/reservation/confirm', sitController.confirmReservation);
 router.post('/reservation/cancel', sitController.cancelReservation);
 
-router.get('/detail/:id', sitController.getSitterInfoById);
+// sitter id로 찾을 때
+router.get('/sitter/detail/:id', sitController.getSitterInfoBySitterId);
+
+// user id로 찾을 때
+router.get('/sitter/byid/:id', sitController.getSitterInfoByUserId);
 
 module.exports = router;
