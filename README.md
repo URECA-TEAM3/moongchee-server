@@ -94,59 +94,59 @@
 
 - `POST /api/members/signup - 새로운 사용자 계정을 가입하고 필요한 사용자 정보, 리프레시토큰을 저장`
 - `POST /api/members/check-nickname - 사용자가 입력한 닉네임이 중복되는지 확인하고, 사용 가능 여부를 반환`
-- `POST /api/members/update-points`
+- `POST /api/members/update-points - 포인트 업데이트`
 - `POST /api/members/send-email-verification - 회원가입 시 사용자의 이메일로 인증 코드를 전송하여 이메일 주소 검증`
-- `GET /api/members/point/:id`
-- `PUT /api/members/update-profile`
-- `PUT /api/members/update-profile-in-cart`
+- `GET /api/members/point/:id - 포인트 조회`
+- `PUT /api/members/update-profile - 멤버 프로필 수정`
+- `PUT /api/members/update-profile-in-cart - 장바구니에서 멤버 배송지 및 정보 수정`
 
 ### **Petsitter Routes**
 
-- `POST /api/petsitter/apply 펫시터 지원`
-- `POST /api/petsitter/reservation/list 펫시터 리스트 조회`
-- `POST /api/petsitter/reservation/add 펫시터 예약 내역 추가`
-- `POST /api/petsitter/reservation/confirm 펫시터 예약 확정`
-- `POST /api/petsitter/reservation/cancel 펫시터 예약 취소`
-- `GET /api/petsitter/list 펫시터 예약 전체 조회`
-- `GET /api/petsitter/sitter/detail 펫시터 상세 조회`
-- `GET /api/petsitter/reservation/detail/:id 펫시터 예약내역 상세조회`
-- `PUT /api/petsitter/sitter/update 펫시터 정보 수정`
+- `POST /api/petsitter/apply - 펫시터 지원`
+- `POST /api/petsitter/reservation/list - 펫시터 리스트 조회`
+- `POST /api/petsitter/reservation/add - 펫시터 예약 내역 추가`
+- `POST /api/petsitter/reservation/confirm - 펫시터 예약 확정`
+- `POST /api/petsitter/reservation/cancel - 펫시터 예약 취소`
+- `GET /api/petsitter/list - 펫시터 예약 전체 조회`
+- `GET /api/petsitter/sitter/detail - 펫시터 상세 조회`
+- `GET /api/petsitter/reservation/detail/:id - 펫시터 예약내역 상세조회`
+- `PUT /api/petsitter/sitter/update - 펫시터 정보 수정`
 
 ### **Pet Routes**
 
 - `POST /api/pets/animal-register - 반려동물의 정보를 데이터베이스에 저장하여 사용자 프로필에 반려동물 정보를 추가`
-- `GET /api/pets/:id 회원별 반려동물 조회`
-- `GET /api/pets/detail/:id 반려동물별 정보 조회`
-- `PUT /api/pets/update-profile 반려동물 정보 수정`
-- `DELETE /api/pets/:id 반려동물 정보 삭제`
+- `GET /api/pets/:id - 회원별 반려동물 조회`
+- `GET /api/pets/detail/:id - 반려동물별 정보 조회`
+- `PUT /api/pets/update-profile - 반려동물 정보 수정`
+- `DELETE /api/pets/:id - 반려동물 정보 삭제`
 
 ### **Product Routes**
 
-- `GET /api/products 모든 상품 조회`
-- `GET /api/products/:id 상품 상세 조회`
-- `GET /api/products/popular-products 인기 상품 조회`
-- `GET /api/products/new-products 새로운 상품 조회`
-- `POST /api/products/getByIds 여러 id에 해당하는 상품 조회`
+- `GET /api/products - 모든 상품 조회`
+- `GET /api/products/:id - 상품 상세 조회`
+- `GET /api/products/popular-products - 인기 상품 조회`
+- `GET /api/products/new-products - 새로운 상품 조회`
+- `POST /api/products/getByIds - 여러 id에 해당하는 상품 조회`
 
 ### **Payment Routes**
 
-- `POST /api/payments 결제 정보 저장`
-- `POST /api/payments/confirm 결제 정보가 올바른지 검증`
-- `POST /api/payments/approve 결제 승인`
-- `GET /api/payments/fail 결제 실패`
+- `POST /api/payments - 결제 정보 저장`
+- `POST /api/payments/confirm - 결제 정보가 올바른지 검증`
+- `POST /api/payments/approve - 결제 승인`
+- `GET /api/payments/fail - 결제 실패`
 
 ### **Cart Routes**
 
-- `GET /api/cart/:user_id 장바구니 조회`
-- `POST /api/cart 장바구니 상품 추가`
-- `DELETE /api/cart/:cart_id 장바구니 상품 삭제`
-- `POST /api/cart/pay 최종 결제하는 상품 전송`
-- `POST /api/cart/save 장바구니 상품 정보 수정(수량, 체크상태)`
-- `GET /api/cart/order/:id 주문한 상품 조회하기`
-- `PUT /api/cart/refund-product 상품 주문 취소`
+- `GET /api/cart/:user_id - 장바구니 조회`
+- `POST /api/cart - 장바구니 상품 추가`
+- `DELETE /api/cart/:cart_id - 장바구니 상품 삭제`
+- `POST /api/cart/pay - 최종 결제하는 상품 전송`
+- `POST /api/cart/save - 장바구니 상품 정보 수정(수량, 체크상태)`
+- `GET /api/cart/order/:id - 주문한 상품 조회하기`
+- `PUT /api/cart/refund-product - 상품 주문 취소`
 
 ### **Notification Routes**
 
-- `POST /api/notifications/save 알람 저장 및 누적`
-- `GET /api/notifications/:id 회원별 알람 조회`
-- `PUT /api/notifications/delete-all 전체 알람 읽음 처리`
+- `POST /api/notifications/save - 알람 저장 및 누적`
+- `GET /api/notifications/:id - 회원별 알람 조회`
+- `PUT /api/notifications/delete-all - 전체 알람 읽음 처리`
