@@ -78,17 +78,17 @@
 
 ### **Auth Routes**
 
-- `POST /api/auth/google-login - Google OAuth 토큰을 이용해 사용자 로그인 또는 회원 가입을 처리합니다.`
-- `POST /api/auth/kakao-login - Kakao OAuth 토큰으로 사용자 로그인 또는 회원 가입을 처리합니다.`
-- `POST /api/auth/refresh-token - 리프레시 토큰을 사용하여 새로운 액세스 토큰을 발급합니다.`
-- `GET /api/auth/user-info - 인증된 사용자의 정보를 조회하여 반환합니다.`
+- `POST /api/auth/google-login - Google OAuth 토큰을 이용해 사용자 로그인 또는 회원 가입 처리`
+- `POST /api/auth/kakao-login - Kakao OAuth 토큰으로 사용자 로그인 또는 회원 가입 처리`
+- `POST /api/auth/refresh-token - 리프레시 토큰을 사용하여 새로운 액세스 토큰 발급`
+- `GET /api/auth/user-info - 인증된 사용자의 정보를 조회하여 반환`
 
 ### **Member Routes**
 
-- `POST /api/members/signup - 새로운 사용자 계정을 가입하고 필요한 사용자 정보, 리프레시토큰을 저장합니다.`
-- `POST /api/members/check-nickname - 사용자가 입력한 닉네임이 중복되는지 확인하고, 사용 가능 여부를 반환합니다.`
+- `POST /api/members/signup - 새로운 사용자 계정을 가입하고 필요한 사용자 정보, 리프레시토큰을 저장`
+- `POST /api/members/check-nickname - 사용자가 입력한 닉네임이 중복되는지 확인하고, 사용 가능 여부를 반환`
 - `POST /api/members/update-points`
-- `POST /api/members/send-email-verification - 회원가입 시 사용자의 이메일로 인증 코드를 전송하여 이메일 주소를 검증합니다.`
+- `POST /api/members/send-email-verification - 회원가입 시 사용자의 이메일로 인증 코드를 전송하여 이메일 주소 검증`
 - `GET /api/members/point/:id`
 - `PUT /api/members/update-profile`
 - `PUT /api/members/update-profile-in-cart`
@@ -107,7 +107,7 @@
 
 ### **Pet Routes**
 
-- `POST /api/pets/animal-register - 반려동물의 정보를 데이터베이스에 저장하여 사용자 프로필에 반려동물 정보를 추가합니다.`
+- `POST /api/pets/animal-register - 반려동물의 정보를 데이터베이스에 저장하여 사용자 프로필에 반려동물 정보를 추가`
 - `GET /api/pets/:id`
 - `GET /api/pets/detail/:id`
 - `PUT /api/pets/update-profile`
