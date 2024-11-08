@@ -1,167 +1,223 @@
-const dotenv = require('dotenv');
-dotenv.config();
 const express = require('express');
-const app = express();
-const axios = require('axios');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
+const dotenv = require('dotenv');
+const bodyParser = require('body-parser');
+dotenv.config();
 
-app.use(cors());
+const authRoutes = require('./routes/authRoutes');
+const memberRoutes = require('./routes/memberRoutes');
+const petRoutes = require('./routes/petRoutes');
+const cartRoutes = require('./routes/cartRoutes');
+const sitterRoutes = require('./routes/sitterRoutes');
+const productRoutes = require('./routes/productRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+
+const app = express();
+app.use(
+  cors({
+    origin: ['https://moongchee.vercel.app', 'http://localhost:5173'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+  })
+);
+app.use(bodyParser.json());
 app.use(express.json());
 
-const db = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
+app.get('/', (req, res) => res.send('Express on Vercel'));
 
-const initializeDatabase = async () => {
+app.use('/api/auth', authRoutes);
+app.use('/api/members', memberRoutes);
+app.use('/api/pets', petRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/petsitter', sitterRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/notifications', notificationRoutes);
+
+const createTables = async () => {
   try {
-    await db.query(`CREATE DATABASE IF NOT EXISTS ${process.env.DB_NAME}`);
-    await db.query(`USE ${process.env.DB_NAME}`);
+    const db = mysql.createPool({
+      host: process.env.DB_AWS_HOST,
+      user: process.env.DB_AWS_USER,
+      password: process.env.DB_AWS_PASSWORD,
+      database: process.env.DB_AWS_NAME,
+      port: process.env.DB_AWS_PORT,
+    });
+    const connection = await db.getConnection();
 
-    await db.query(`
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS member (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        social_provider VARCHAR(50) NOT NULL,
-        petsitter TINYINT(1) DEFAULT 0,
+        id INT NOT NULL AUTO_INCREMENT,
+        name VARCHAR(100) NOT NULL, 
+        social_provider VARCHAR(50) NOT NULL, 
+        petsitter TINYINT(1) NOT NULL DEFAULT 0,
         phone VARCHAR(100) NOT NULL,
-        address VARCHAR(255) NOT NULL,
-        birthDate VARCHAR(50),
-        unique_id VARCHAR(50)
-      )
+        email VARCHAR(100) NOT NULL UNIQUE,  
+        address VARCHAR(255) NOT NULL, 
+        detailaddress VARCHAR(255) DEFAULT NULL, 
+        birthDate VARCHAR(50) NOT NULL,
+        unique_id VARCHAR(50) NOT NULL,
+        profile_image_url VARCHAR(255) NOT NULL,
+        nickname VARCHAR(15) NOT NULL,
+        refresh_token VARCHAR(255) NOT NULL,
+        point INT NOT NULL DEFAULT 0,
+        PRIMARY KEY (id)
+      );
     `);
 
-    await db.query(`
+    await connection.query(`
       CREATE TABLE IF NOT EXISTS pet (
-        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+        id BIGINT NOT NULL AUTO_INCREMENT,
         user_id INT NOT NULL,
         name VARCHAR(100) NOT NULL,
-        age INT,
-        weight FLOAT,
-        species VARCHAR(50),
-        gender VARCHAR(50),
-        surgery TINYINT(1) DEFAULT 0,
+        age INT NULL,
+        weight FLOAT NULL,
+        species VARCHAR(50) NULL,
+        gender VARCHAR(50) NULL,
+        surgery TINYINT(1) NULL DEFAULT 0,
+        animal_image_url VARCHAR(255) NULL,
+        PRIMARY KEY (id),
         FOREIGN KEY (user_id) REFERENCES member(id) ON DELETE CASCADE
-      )
+      );
     `);
 
-    console.log('데이터베이스와 테이블이 성공적으로 초기화되었습니다.');
-  } catch (error) {
-    console.error('데이터베이스 초기화 오류:', error);
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS product (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        category_id INT NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        image VARCHAR(255) NOT NULL,
+        description VARCHAR(255) NOT NULL,
+        price INT NOT NULL,
+        sales INT NOT NULL DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS cart (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        product_id BIGINT NOT NULL,
+        user_id BIGINT NOT NULL,
+        quantity INT NOT NULL,
+        checked BOOLEAN
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS sitter (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        userId VARCHAR(255) NOT NULL, 
+        name VARCHAR(255) NOT NULL,
+        image VARCHAR(255) NOT NULL,
+        region VARCHAR(100) NOT NULL,
+        description TEXT NOT NULL,
+        experience TEXT NOT NULL,
+        startTime VARCHAR(50) NOT NULL,
+        endTime VARCHAR(50) NOT NULL,
+        weekdays VARCHAR(255) NOT NULL,
+        status VARCHAR(255) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS order_table (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        user_id BIGINT NOT NULL,
+        total DOUBLE NOT NULL
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS reservation (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        user_id INT NOT NULL,
+        sitter_id INT NOT NULL,
+        requestDate VARCHAR(100) NOT NULL,
+        startTime VARCHAR(50) NOT NULL,
+        endTime VARCHAR(50) NOT NULL,
+        status VARCHAR(50) NOT NULL,
+        price INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS order_item (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        product_id BIGINT NOT NULL,
+        order_id BIGINT NOT NULL,
+        quantity INT NOT NULL,
+        price INT NOT NULL,
+        status VARCHAR(255) NOT NULL,
+        order_date DATE,
+        user_id BIGINT NOT NULL
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS reservation_details (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT,
+        reservation_id BIGINT NOT NULL,
+        request TEXT,
+        dogSize VARCHAR(50),
+        pet VARCHAR(50),
+        workingTime VARCHAR(50),
+        price DECIMAL(10, 2) DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (reservation_id) REFERENCES reservation(id) ON DELETE CASCADE
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS payment_verification (
+        order_id VARCHAR(50) NOT NULL,
+        user_id INT NOT NULL,
+        amount INT NOT NULL,
+        PRIMARY KEY (order_id),
+        FOREIGN KEY (user_id) REFERENCES member(id) ON DELETE CASCADE
+      );
+      `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS payment_approved (
+        order_id VARCHAR(50) NOT NULL,
+        amount INT NOT NULL,
+        payment_key VARCHAR(50) NOT NULL,
+        FOREIGN KEY (order_id) REFERENCES payment_verification(order_id) ON DELETE CASCADE
+      );
+    `);
+
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS notification (
+        id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+        sending_name VARCHAR(50) NOT NULL,
+        receive_id BIGINT NOT NULL,
+        receive_name VARCHAR(50) NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        status VARCHAR(50) NOT NULL
+      );
+    `);
+
+    console.log('테이블이 성공적으로 생성되었습니다.');
+    connection.release();
+  } catch (err) {
+    console.error('테이블 생성 오류 발생:', err);
   }
 };
 
-initializeDatabase();
+(async () => {
+  await createTables();
 
-app.set('port', process.env.PORT || 3000);
-
-app.post('/api/animal-register', async (req, res) => {
-  const { userId, name, age, weight, species, gender, surgery } = req.body;
-
-  if (!userId || !name || !age || !weight || !species || !gender) {
-    return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
-  }
-
-  try {
-    const query = `
-      INSERT INTO pet (user_id, name, age, weight, species, gender, surgery)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
-    const values = [userId, name, age, weight, species, gender, surgery];
-
-    await db.query(query, values);
-
-    res.status(201).json({ message: '반려동물 등록 성공' });
-  } catch (error) {
-    console.error('반려동물 정보 저장 오류:', error);
-    res.status(500).json({ message: '반려동물 정보 저장 실패' });
-  }
-});
-
-app.post('/api/google-login', async (req, res) => {
-  const { token } = req.body;
-
-  if (!token) {
-    return res.status(400).json({ message: '토큰이 없습니다.' });
-  }
-
-  try {
-    const googleResponse = await axios.get(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`);
-
-    const googleUserData = googleResponse.data;
-    const userId = googleUserData.sub;
-
-    console.log('구글 사용자 ID:', userId);
-
-    const [existingUser] = await db.query('SELECT * FROM member WHERE unique_id = ?', [userId]);
-
-    if (existingUser.length > 0) {
-      return res.status(200).json({ message: '이미 가입된 회원입니다.', exists: true });
-    }
-
-    res.status(200).json({ message: '회원가입 필요', exists: false, userId });
-  } catch (error) {
-    console.error('로그인 오류:', error.message);
-    res.status(500).json({ message: '구글 로그인 실패', error: error.message });
-  }
-});
-
-app.post('/api/kakao-login', async (req, res) => {
-  const { token } = req.body;
-
-  if (!token) {
-    return res.status(400).json({ message: '토큰이 없습니다.' });
-  }
-
-  try {
-    const response = await axios.get('https://kapi.kakao.com/v2/user/me', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    const userData = response.data;
-    const userId = userData.id;
-
-    const [existingUser] = await db.query('SELECT * FROM member WHERE unique_id = ?', [userId]);
-
-    if (existingUser.length > 0) {
-      return res.status(200).json({ message: '이미 가입된 회원입니다.', exists: true, userId });
-    }
-
-    res.status(200).json({ message: '회원가입 필요', exists: false, userId });
-  } catch (error) {
-    console.error('카카오 로그인 오류:', error.message);
-    res.status(500).json({ message: '카카오 로그인 실패' });
-  }
-});
-
-app.post('/api/signup', async (req, res) => {
-  const { name, phone, address, birthDate, provider, token } = req.body;
-
-  if (!name || !phone || !address || !birthDate || !provider || !token) {
-    return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
-  }
-
-  try {
-    const query = `
-      INSERT INTO member (name, phone, address, birthDate, social_provider, unique_id)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `;
-    const values = [name, phone, address, birthDate, provider, token];
-
-    const [result] = await db.query(query, values);
-
-    res.status(201).json({ message: '회원가입 성공', userId: result.insertId });
-  } catch (error) {
-    console.error('회원가입 오류:', error);
-    res.status(500).json({ message: '회원가입 실패' });
-  }
-});
-
-app.listen(app.get('port'), () => {
-  console.log(`${app.get('port')}번 포트에서 서버 실행 중`);
-});
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`서버가 ${PORT}번 포트에서 실행 중입니다.`);
+  });
+})();
