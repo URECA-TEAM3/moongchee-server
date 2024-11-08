@@ -1,3 +1,4 @@
+// 필요한 모듈과 환경 변수 불러오기
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2/promise');
@@ -5,6 +6,7 @@ const dotenv = require('dotenv');
 const bodyParser = require('body-parser');
 dotenv.config();
 
+// 라우트 모듈 불러오기
 const authRoutes = require('./routes/authRoutes');
 const memberRoutes = require('./routes/memberRoutes');
 const petRoutes = require('./routes/petRoutes');
@@ -15,6 +17,8 @@ const paymentRoutes = require('./routes/paymentRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
+
+// CORS 설정
 app.use(
   cors({
     origin: ['https://moongchee.vercel.app', 'http://localhost:5173'],
@@ -22,11 +26,15 @@ app.use(
     credentials: true,
   })
 );
+
+// JSON 파싱
 app.use(bodyParser.json());
 app.use(express.json());
 
+// 기본 라우트 설정
 app.get('/', (req, res) => res.send('Express on Vercel'));
 
+// API 라우트 설정
 app.use('/api/auth', authRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/pets', petRoutes);
@@ -36,6 +44,7 @@ app.use('/api/petsitter', sitterRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/notifications', notificationRoutes);
 
+// MySQL 테이블 생성 함수
 const createTables = async () => {
   try {
     const db = mysql.createPool({
@@ -215,9 +224,13 @@ const createTables = async () => {
 
 (async () => {
   await createTables();
-
   const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`서버가 ${PORT}번 포트에서 실행 중입니다.`);
-  });
+
+  if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+      console.log(`서버가 ${PORT}번 포트에서 실행 중입니다.`);
+    });
+  }
 })();
+
+module.exports = app;
