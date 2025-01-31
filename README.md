@@ -33,7 +33,7 @@
 
 - 프로젝트 이름: Moongchee 🏠
 - 프로젝트 개발 기간: 2024.10.21-2024.11.08
-- 멤버: 팀 강서진, 김예원, 김의진, 김주영, 노승희, 박주광
+- 멤버: 팀 강서진, 김예원, 김의진, 노승희, 박주광
 
 ## ✏️ 프로젝트 설명
 
@@ -41,13 +41,9 @@
 
 ## 👥 팀원 소개
 
-| <img src="readmeImg/sujin.jpeg" width="150" height="150"/> | <img src="readmeImg/yewon.png" width="150" height="150"/> | <img src="readmeImg/eu1j1n.jpeg" width="150" height="150"/> | <img src="readmeImg/juy.jpeg" width="150" height="150"/> | <img src="readmeImg/seunghee1.JPG" width="150" height="150"/> | <img src="readmeImg/jug.jpeg" width="150" height="150"/> |
-| :--------------------------------------------------------: | :-------------------------------------------------------: | :---------------------------------------------------------: | :------------------------------------------------------: | :-----------------------------------------------------------: | :------------------------------------------------------: |
-|   강서진<br/>[@skang9810](https://github.com/skang9810)    |   김예원<br/>[@yewoniiii](https://github.com/yewoniiii)   |       김의진<br/>[@Eu1j1n](https://github.com/Eu1j1n)       |      김주영<br/>[@ju892](https://github.com/ju892)       |    노승희<br/>[@seung-heee](https://github.com/seung-heee)    |    박주광<br/>[@jugpark](https://github.com/jugpark)     |
-
-<!-- |<img src="readmeImg/sj.jpeg" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/9919?v=4" width="150" height="150"/>|<img src="readmeImg/ez.jpeg" width="150" height="150"/>|<img src="https://avatars.githubusercontent.com/u/75469131?v=4" width="150" height="150"/>|<img src="readmeImg/seunghee.JPG" width="150" height="150"/>|<img src="readmeImg/주광.jpeg" width="150" height="150"/>|
-|강서진<br/>[@skang9810](https://github.com/skang9810)|김예원<br/>[@yewoniiii](https://github.com/yewoniiii)|김의진<br/>[@Eu1j1n](https://github.com/Eu1j1n)|김주영<br/>[@ju892](https://github.com/ju892)|노승희<br/>[@seung-heee](https://github.com/seung-heee)|박주광<br/>[@git](https://github.com/git)|
- -->
+| <img src="readmeImg/sujin.jpeg" width="150" height="150"/> | <img src="readmeImg/yewon.png" width="150" height="150"/> | <img src="readmeImg/eu1j1n.jpeg" width="150" height="150"/> | <img src="readmeImg/seunghee1.JPG" width="150" height="150"/> | <img src="readmeImg/jug.jpeg" width="150" height="150"/> |
+| :--------------------------------------------------------: | :-------------------------------------------------------: | :------------------------------------------------------: | :-----------------------------------------------------------: | :------------------------------------------------------: |
+|   강서진<br/>[@skang9810](https://github.com/skang9810)    |   김예원<br/>[@yewoniiii](https://github.com/yewoniiii)   |       김의진<br/>[@Eu1j1n](https://github.com/Eu1j1n)       |    노승희<br/>[@seung-heee](https://github.com/seung-heee)    |    박주광<br/>[@jugpark](https://github.com/jugpark)     |
 
 ## 📌 주요 서비스
 
